@@ -1,6 +1,6 @@
 # TopIcons
 
-![Screenshot](https://raw.githubusercontent.com/nevesnunes/topicons/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshot.png)
 
 An alternative to GNOME Shell's Legacy Tray, making use of the top panel. Icons have adjusted padding and configurable appearance, in order to suit your theme better. By default the extension has custom opacity and saturation settings applied.
 

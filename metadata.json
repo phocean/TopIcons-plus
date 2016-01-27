@@ -1,0 +1,12 @@
+{
+  "description": "Shows legacy tray icons on top",
+  "name": "TopIcons",
+  "gettext-domain": "TopIcons",
+  "shell-version": [
+    "3.16", "3.18"
+  ], 
+  "settings-schema": "org.gnome.shell.extensions.topicons",
+  "url": "https://github.com/phocean/topicons",
+  "uuid": "TopIcons@phocean.net",
+  "version": 2
+}

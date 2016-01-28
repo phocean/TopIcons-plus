@@ -2,7 +2,9 @@
 
 ![Screenshot](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshot.png)
 
-An alternative to GNOME Shell's Legacy Tray, making use of the top panel. Icons have adjusted padding and configurable appearance, in order to suit your theme better. By default the extension has custom opacity and saturation settings applied.
+An alternative to GNOME Shell's Legacy Tray, making use of the top panel.
+
+I had a few issues with the original TopIcons extension: it froze when changing the screen geometry, like enable an external monitor. Also, I found a few forks like TopTray with some good ideas, like settings for icon size and colors. So I simply merged them all in a better extension.
 
 ## Installation
 
@@ -14,10 +16,10 @@ An alternative to GNOME Shell's Legacy Tray, making use of the top panel. Icons 
 
 GNOME Shell 3.16 and up.
 
-## Notes
-
-Icons will have a small delay before appearing on the panel, due to a workaround regarding icon loading. This is a GNOME Shell issue, also reproducable with the Legacy Tray.
-
 ## Credits
 
 Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
+
+## Notes
+
+The extension is pending review on https://extensions.gnome.org, so hopefully it will be validated so that it is easier to install soon.

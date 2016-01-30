@@ -31,17 +31,21 @@ cd TopIcons
 make
 ```
 
+The whole process should look similar to this:
+
+![Install](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/install.png)
+
 This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
 
-Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>.
+Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>:
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
 
-Finally, launch the *gnome-tweak-tool* utility to enable the extension.
+Finally, launch the *gnome-tweak-tool* utility to enable the extension:
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-enable.png)
 
-You can configure the extension.
+You can configure appearance settings (opacity, saturation and icon size):
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-config.png)
 

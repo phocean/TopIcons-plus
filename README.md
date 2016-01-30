@@ -17,10 +17,10 @@ apt-get install make
 dnf install make
 ```
 
-Download the code to any folder, e.g. <code>/home/$USER/Download</code>, using this command :
+Download the code to any folder, e.g. <code>/home/$USER/Downloads</code>, using this command :
 
 ```bash
-cd /home/$USER/Download
+cd /home/$USER/Downloads
 git clone https://github.com/phocean/TopIcons.git
 ```
 

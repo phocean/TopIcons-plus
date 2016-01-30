@@ -10,12 +10,12 @@ I had a few issues with the original TopIcons extension: it froze when changing 
 
 Pre-Requisite: You need the *make* utility :
 
-<code>
+```bash
 # Debian, Ubuntu
 apt-get install make
 # RedHad, Fedora
 dnf install make
-</code>
+```
 
 Download the code to any folder, e.g. <code>/home/$USER/Download</code>, using this command :
 
@@ -36,9 +36,11 @@ Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>.
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
 
-Finally, launch the *gnome-tweak-tool* utility to enable and configure the extension.
+Finally, launch the *gnome-tweak-tool* utility to enable the extension.
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-enable.png)
+
+You can configure the extension.
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-config.png)
 

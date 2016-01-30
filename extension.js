@@ -30,13 +30,10 @@ let separatorRight;
 
 function init() {
     settings = Convenience.getSettings();
-    settings.connect(
-            'changed::icon-opacity', Lang.bind(this, refreshOpacity));
-    settings.connect(
-            'changed::icon-saturation', Lang.bind(this, refreshSaturation));
-
-    // we need to refresh icons when user changes icon-size in settings
+    settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
+    settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
     settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
+    settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
 
     tray = Main.legacyTray;
     trayIconImplementations = imports.ui.legacyTray.STANDARD_TRAY_ICON_IMPLEMENTATIONS;
@@ -66,6 +63,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     iconSize = settings.get_int('icon-size');
     icon.set_size(iconSize, iconSize);
     icon.reactive = true;
+    let trayPosition = settings.get_string('tray-pos');
 
     let iconContainer = new St.Button({child: icon, visible: false});
     iconContainer.set_style('padding: 0px 4px;');
@@ -81,8 +79,14 @@ function onTrayIconAdded(o, icon, role, delay) {
     applyPreferences(icon);
     
     // Insert icon container before right separator
-    let index = Main.panel._rightBox.get_n_children() - 2;
-    Main.panel._rightBox.insert_child_at_index(iconContainer, index);
+    if (trayPosition == 'left') {
+        let index = Main.panel._leftBox.get_n_children() - 2;
+        Main.panel._leftBox.insert_child_at_index(iconContainer, index);
+    }
+    else {
+        let index = Main.panel._rightBox.get_n_children() - 2;
+        Main.panel._rightBox.insert_child_at_index(iconContainer, index);
+    }
 
     // Some icons won't appear on application start. As a workaround, 
     // we delay their visibility.
@@ -111,13 +115,20 @@ function onTrayIconRemoved(o, icon) {
 }
 
 function addSeperator() {
-    let separator = new St.Bin({visible: false});   
+    let separator = new St.Bin({visible: false}); 
+    let trayPosition = settings.get_string('tray-pos'); 
 
     // 8px = 12px (panel button padding) - 4px (icon container padding)
     separator.set_style('width: 8px;'); 
 
-    let index = Main.panel._rightBox.get_n_children() - 1;
-    Main.panel._rightBox.insert_child_at_index(separator, index);
+    if (trayPosition == 'left') {
+        let index = Main.panel._leftBox.get_n_children() - 1;
+        Main.panel._leftBox.insert_child_at_index(separator, index);
+    }
+    else {
+        let index = Main.panel._rightBox.get_n_children() - 1;
+        Main.panel._rightBox.insert_child_at_index(separator, index);
+    }
     
     return separator;
 }
@@ -258,4 +269,10 @@ function refreshSize() {
     iconSize = settings.get_int('icon-size');
     for (let i=0; i<icons.length; i++)
         icons[i].set_size(iconSize, iconSize);
+}
+
+function refreshPos() {
+    trayPosition = settings.get_string('tray-pos');
+    moveToTray();
+    moveToTop();
 }

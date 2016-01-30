@@ -13,5 +13,10 @@
       <summary>Icon size</summary>
       <description>Icon size in pixel</description>
     </key>
+    <key name="tray-pos" type="s">
+      <default>"right"</default>
+      <summary>Position in tray</summary>
+      <description>Set where the TopIcon tray should appear in Gnome tray</description>
+    </key>
   </schema>
 </schemalist>

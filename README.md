@@ -1,6 +1,6 @@
 # TopIcons
 
-![Screenshot](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
 
 An alternative to GNOME Shell's Legacy Tray, making use of the top panel.
 
@@ -8,9 +8,39 @@ I had a few issues with the original TopIcons extension: it froze when changing 
 
 ## Installation
 
-- Move the extension to <code>~/.local/share/gnome-shell/extensions</code>
-- Reload GNOME Shell with <code>Alt+F2 r Enter</code>
-- Enable the extension with *gnome-tweak-tool*
+Pre-Requisite: You need the *make* utility :
+
+<code>
+# Debian, Ubuntu
+apt-get install make
+# RedHad, Fedora
+dnf install make
+</code>
+
+Download the code to any folder, e.g. <code>/home/$USER/Download</code>, using this command :
+
+<code>
+cd /home/$USER/Download
+git clone https://github.com/phocean/TopIcons.git</code>
+
+Move to the downloaded folder and execute the installation script:
+
+<code>
+cd TopIcons
+make
+</code>
+
+This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
+
+Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>.
+
+![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
+
+Finally, launch the *gnome-tweak-tool* utility to enable and configure the extension.
+
+![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-enable.png)
+
+![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-config.png)
 
 ## Compatibility
 

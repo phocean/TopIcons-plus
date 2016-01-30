@@ -19,16 +19,17 @@ dnf install make
 
 Download the code to any folder, e.g. <code>/home/$USER/Download</code>, using this command :
 
-<code>
+```bash
 cd /home/$USER/Download
-git clone https://github.com/phocean/TopIcons.git</code>
+git clone https://github.com/phocean/TopIcons.git
+```
 
 Move to the downloaded folder and execute the installation script:
 
-<code>
+```bash
 cd TopIcons
 make
-</code>
+```
 
 This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
 

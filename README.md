@@ -41,7 +41,11 @@ Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>:
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
 
-Finally, launch the *gnome-tweak-tool* utility to enable the extension:
+Finally, launch the *gnome-tweak-tool* utility to manage extensions:
+
+![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/gnome-tweak.png)
+
+Enable it:
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-enable.png)
 

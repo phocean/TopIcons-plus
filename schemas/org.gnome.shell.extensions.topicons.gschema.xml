@@ -18,5 +18,10 @@
       <summary>Position in tray</summary>
       <description>Set where the TopIcon tray should appear in Gnome tray</description>
     </key>
+    <key name="tray-order" type="i">
+      <default>1</default>
+      <summary>Order in tray</summary>
+      <description>Set where the TopIcon tray should appear among other trays</description>
+    </key>
   </schema>
 </schemalist>

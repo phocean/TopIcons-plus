@@ -221,9 +221,9 @@ function applyOpacity(icon) {
     parent.opacityEnterId = parent.connect('enter-event', function(actor, event) {
         icon.opacity = 255;
     });
-    //parent.opacityLeaveId = parent.connect('leave-event', function(actor, event) {
-    //    icon.opacity = opacityValue;
-    //});
+    parent.opacityLeaveId = parent.connect('leave-event', function(actor, event) {
+        icon.opacity = opacityValue;
+    });
     icon.opacity = opacityValue;
 }
 

@@ -217,6 +217,13 @@ function applySaturation(icon) {
 
 function applyOpacity(icon) {
     let opacityValue = settings.get_int('icon-opacity');
+    let parent = icon.get_parent();
+    parent.opacityEnterId = parent.connect('enter-event', function(actor, event) {
+        icon.opacity = 255;
+    });
+    //parent.opacityLeaveId = parent.connect('leave-event', function(actor, event) {
+    //    icon.opacity = opacityValue;
+    //});
     icon.opacity = opacityValue;
 }
 

@@ -4,15 +4,11 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
-const Panel = imports.ui.panel;
 const Clutter = imports.gi.Clutter;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
-
-const ICON_OPACITY = 220;
-const ICON_DESATURATION = 0.375;
 
 let settings;
 
@@ -20,10 +16,7 @@ let tray;
 let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
-
-// Keep track of icons for easier manipulation
 let icons = [];
-
 // Separators provide extra padding between tray icons and panel buttons
 let separatorLeft;
 let separatorRight;
@@ -39,9 +32,9 @@ function enable() {
     settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
     settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
+    settings.connect('changed::icon-padding', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
     settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
-
 }
 
 function disable() {
@@ -49,6 +42,7 @@ function disable() {
     settings.disconnect('changed::icon-opacity');
     settings.disconnect('changed::icon-staturation');
     settings.disconnect('changed::icon-size');
+    settings.disconnect('changed::icon-padding');
     settings.disconnect('changed::tray-pos');
     settings.disconnect('changed::tray-order');
 }
@@ -66,14 +60,12 @@ function onTrayIconAdded(o, icon, role, delay) {
 
     // Icon properties
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    iconSize = settings.get_int('icon-size');
-    icon.set_size(iconSize, iconSize);
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
 
     let iconContainer = new St.Button({child: icon, visible: false});
-    iconContainer.set_style('padding: 0px 4px;');
+    applyPadding(iconContainer);
 
     icon.connect("destroy", function() {
         icon.clear_effects();
@@ -83,6 +75,7 @@ function onTrayIconAdded(o, icon, role, delay) {
         icon.click(event);
     });
 
+    // Apply user settings
     applyPreferences(icon);
     
     // Insert icon container before right separator
@@ -207,91 +200,80 @@ function moveToTray() {
     icons = [];
 }
 
+// These functions read settings and apply user preferences per icon
+
 function applyPreferences(icon) {
-    if (settings.get_boolean('icon-opacity'))
-        applyOpacity(icon);
-    if (settings.get_boolean('icon-saturation'))
-        applySaturation(icon);
-}
-
-function applyOpacity(icon) {
-    icon.opacity = ICON_OPACITY;
-
-    let parent = icon.get_parent();
-    parent.opacityEnterId =
-        parent.connect('enter-event', function(actor, event) {
-            icon.opacity = 255;
-        });
-    parent.opacityLeaveId =
-        parent.connect('leave-event', function(actor, event) {
-            icon.opacity = ICON_OPACITY;
-        });
+    applyOpacity(icon);
+    applySaturation(icon);
+    applySize(icon);
 }
 
 function applySaturation(icon) {
-    let effect = new Clutter.DesaturateEffect({factor : ICON_DESATURATION});
+    let desaturationValue =  settings.get_double('icon-saturation');
+    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
     icon.add_effect(effect);
-
-    let parent = icon.get_parent();
-    parent.saturationEnterId =
-        parent.connect('enter-event', function(actor, event) {
-            effect.set_factor(0.0);
-        });
-    parent.saturationLeaveId =
-        parent.connect('leave-event', function(actor, event) {
-            effect.set_factor(ICON_DESATURATION);
-        });
+    effect.set_factor(desaturationValue);
 }
 
-function refreshOpacity() {
-    if (settings.get_boolean('icon-opacity'))
-        for (let i = 0; i < icons.length; i++) {
-            let icon = icons[i];
-            applyOpacity(icon);
-        }
-    else
-        for (let i = 0; i < icons.length; i++) {
-            let icon = icons[i];
-            icon.opacity = 255;
+function applyOpacity(icon) {
+    let opacityValue = settings.get_int('icon-opacity');
+    icon.opacity = opacityValue;
+}
 
-            let parent = icon.get_parent();
-            parent.disconnect(parent.opacityEnterId);
-            parent.disconnect(parent.opacityLeaveId);
-        }
+function applySize(icon) {
+    let iconSize = settings.get_int('icon-size');
+    icon.set_size(iconSize, iconSize)
+}
+
+function applyPadding(iconContainer) {
+    let paddingValue = settings.get_int('icon-padding');
+    iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
+}
+
+// These functions are called by signals on preference change and loop through icons to apply it
+
+function refreshOpacity() {
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        applyOpacity(icon);
+    }
 }
 
 function refreshSaturation() {
-    if (settings.get_boolean('icon-saturation'))
-        for (let i = 0; i < icons.length; i++) {
-            let icon = icons[i];
-            applySaturation(icon);
-        }
-    else
-        for (let i = 0; i < icons.length; i++) {
-            let icon = icons[i];
-            icon.clear_effects();
-
-            let parent = icon.get_parent();
-            parent.disconnect(parent.saturationEnterId);
-            parent.disconnect(parent.saturationLeaveId);
-        }
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        applySaturation(icon);
+    }
+    refreshTray();
 }
 
 function refreshSize() {
     iconSize = settings.get_int('icon-size');
     for (let i=0; i<icons.length; i++)
-        icons[i].set_size(iconSize, iconSize);
+        applySize(icons[i]);
+}
+
+function refreshTray() {
+    moveToTray();
+    moveToTop();
 }
 
 function refreshPos() {
-    let value = settings.get_int('tray-pos');
-    if (value >= Main.panel._leftBox.get_n_children()) {
-        value = 0;
-        settings.set_int(value);
-        return;
+    let trayPosition = settings.get_string('tray-pos');
+    let value = settings.get_int('tray-order');
+
+    // Dirty hack but could not find how to access Main items from prefs.js to set a dynamic max value for the current tray
+    if (trayPosition == 'left') {
+        if (value >= Main.panel._leftBox.get_n_children()) {
+            value = 0;
+            settings.set_int('tray-order',value);
+        }
     }
-    moveToTray();
-    moveToTop();
-    
-    
+    else {
+        if (value >= Main.panel._rightBox.get_n_children()) {
+            value = 0;
+            settings.set_int('tray-order',value);
+        }
+    }
+    refreshTray();
 }

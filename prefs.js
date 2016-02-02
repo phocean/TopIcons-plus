@@ -23,119 +23,85 @@ function init() {
 
 const Settings = new Lang.Class({
     Name: 'Settings',
-    Extends: Gtk.Grid,
 
-    _init: function() {
-        this.parent({halign: Gtk.Align.CENTER});
-        this.set_orientation(Gtk.Orientation.VERTICAL);
+    _init: function(params) {
+        this.w = new Gtk.Grid(params);
+        this.w.set_orientation(Gtk.Orientation.VERTICAL);
         this._settings = Convenience.getSettings();
         this._changedPermitted = false;
-        
-        // Appearance
-        let label = new Gtk.Label({
-            label: '<b>' + _("Icon appearance") + '</b>',
-            use_markup: true,
-            halign: Gtk.Align.CENTER,
-            margin_top: 20, margin_bottom: 20
-        });
-        this.add(label);
 
-        // Opacity
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7, spacing: 20});
-
-        let label = new Gtk.Label({
-          label: "Opacity",
-          use_markup: true,
-        });
-        let adjustment = new Gtk.Adjustment({
-          lower: 0,
-          upper: 220,
-          step_increment: 1
-        });
-        let opacity = new Gtk.HScale({
-          digits:0,
-          adjustment: adjustment,
-          value_pos: Gtk.PositionType.RIGHT
-        });
-        hbox.add(label);
-        hbox.pack_end(opacity, true, true, 0);
-        this.add(hbox);
-
-        //opacity.set_value(this._settings.get_double('icon-opacity'));
-
-/*        opacity.connect('value-changed', Lang.bind(this, function(slide){
-            let s = slide.get_value_as_double();
-            this._settings.set_double('icon-opacity', s);
-            //Main.refreshPos();
-        }));*/
-
-        // Saturation
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7, spacing: 20});
-
-        let label = new Gtk.Label({
-          label: "Saturation",
-          use_markup: true,
-        });
-        let adjustment = new Gtk.Adjustment({
-          lower: 0,
-          upper: 1,
-          step_increment: 0.005
-        });
-        let scale = new Gtk.HScale({
-          digits:3,
-          adjustment: adjustment,
-          value_pos: Gtk.PositionType.RIGHT
-        });
-        hbox.add(label);
-        hbox.pack_end(scale, true, true, 0);
-        this.add(hbox);
-
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-
-        //add_bool_option(this, 'icon-opacity', "Opacity",hbox);
-        //add_bool_option(this, 'icon-saturation', "Saturation", hbox);
-
-
-        // Size
-        let box = new Gtk.Box({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            margin: 10,
-            spacing: 20
-        });
-        let label = new Gtk.Label({label: _("Size"), xalign: 0});
-        let iconSizeWidget = new Gtk.SpinButton({halign:Gtk.Align.END});
-            iconSizeWidget.set_sensitive(true);
-            iconSizeWidget.set_range(0, 32);
-            iconSizeWidget.set_value(this._settings.get_int('icon-size'));
-            iconSizeWidget.set_increments(1, 2);
-            iconSizeWidget.connect('value-changed', Lang.bind(this, function(button){
-                let s = button.get_value_as_int();
-                this._settings.set_int('icon-size', s);
-                Main.refreshSize();
+        // Icon opacity
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7, spacing:50});
+        let label = new Gtk.Label({label: "Opacity", xalign: 0});
+        let widget = new Gtk.SpinButton();
+        widget.set_sensitive(true);
+        widget.set_range(0, 255);
+        widget.set_value(this._settings.get_int('icon-opacity'));
+        widget.set_increments(1, 2);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value_as_int();
+            this._settings.set_int('icon-opacity', value);
          }));
-        box.pack_start(label, true, true, 0);
-        box.add(iconSizeWidget);
-        hbox.add(box);
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
 
-        this.add(hbox)
+        // Icon saturation
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: "Desaturation", xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        widget.set_sensitive(true);
+        widget.set_range(0.000, 1.000);
+        widget.set_value(this._settings.get_double('icon-saturation'));
+        widget.set_increments(0.001, 0.010);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value();
+            this._settings.set_double('icon-saturation', value);
+         }));
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
 
+        // Icon size
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: _("Size"), xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END});
+        widget.set_sensitive(true);
+        widget.set_range(0, 32);
+        widget.set_value(this._settings.get_int('icon-size'));
+        widget.set_increments(1, 2);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value_as_int();
+            this._settings.set_int('icon-size', value);
+         }));
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
 
-        // Position
-        let label = new Gtk.Label({
-            label: '<b>' + _("Tray position") + '</b>',
-            use_markup: true,
-            halign: Gtk.Align.CENTER,
-            margin_top: 20, margin_bottom: 20
-        });
-        this.add(label);
-        
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7, halign: Gtk.Align.CENTER});
+        // Icon tray padding
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: _("Padding"), xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END});
+        widget.set_sensitive(true);
+        widget.set_range(0, 20);
+        widget.set_value(this._settings.get_int('icon-padding'));
+        widget.set_increments(1, 2);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value_as_int();
+            this._settings.set_int('icon-padding', value);
+         }));
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
+
+        // Tray position in panel
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: _("Tray side"), xalign: 0});
         let positions = {'left': N_("left"), 'right': N_("right"),}
         let currentPos = this._settings.get_string('tray-pos');
+        hbox.pack_start(label, true, true, 0);
         let radio = null;
-
         for (let pos in positions) {
-
             let position = pos;
             let name = Gettext.gettext(positions[pos]);
             radio = new Gtk.RadioButton({ group: radio, label: name, halign: Gtk.Align.CENTER });
@@ -146,74 +112,32 @@ const Settings = new Lang.Class({
             hbox.add(radio);
             if (pos == currentPos)
                 radio.active = true;
-        
         }
+        this.w.add(hbox);
         
-        // let box = new Gtk.Box({
-        //     orientation: Gtk.Orientation.HORIZONTAL,
-        //     margin: 10,
-        //     spacing: 20
-        // });
-        let label = new Gtk.Label({label: _("Order"), xalign: 0});
-        let orderWidget = new Gtk.SpinButton({halign:Gtk.Align.END});
-        orderWidget.set_sensitive(true);
-        //let a = MainUI.panel._leftBox.get_n_children();
-/*        if (currentPos == 'left') {
-             orderWidget.set_range(0,10);
-         }
-         else {
-             orderWidget.set_range(0,5);
-         }*/
-        orderWidget.set_range(0, 20);
-        orderWidget.set_value(this._settings.get_int('tray-order'));
-        orderWidget.set_increments(1, 2);
-        orderWidget.connect('value-changed', Lang.bind(this, function(button){
-            let s = button.get_value_as_int();
-            this._settings.set_int('tray-order', s);
-            Main.refreshPos();
+        // Tray order in panel
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: _("Tray position"), xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END});
+        widget.set_sensitive(true);
+        widget.set_range(0, 20);
+        widget.set_value(this._settings.get_int('tray-order'));
+        widget.set_increments(1, 2);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value_as_int();
+            this._settings.set_int('tray-order', value);
         }));
-        //box.pack_start(label, true, true, 0);
-        //box.add(orderWidget);
-        //hbox.add(box);
-        this.add(label)
-        this.add(orderWidget);
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
 
-        this.add(hbox);    
         this._changedPermitted = true;
-        
     }
 });
 
-function add_bool_option(widget, txtOption, txtLabel, hbox) {
-    let optionLabel = new Gtk.Label({
-        label: _(txtLabel),
-        xalign: 0
-    });
-    let optionSwitch = new Gtk.Switch({
-        active: widget._settings.get_boolean(txtOption),
-        halign: Gtk.Align.END
-    });
-    optionSwitch.connect(
-        'notify::active', Lang.bind(widget, function(button) {
-            widget._settings.set_boolean(txtOption, button.active);
-        })
-    );
-
-    let box = new Gtk.Box({
-        orientation: Gtk.Orientation.HORIZONTAL,
-        margin: 10,
-        spacing: 20
-    });
-    box.pack_start(optionLabel, true, true, 0);
-    box.add(optionSwitch);
-
-    hbox.add(box);
-}
-
-
 function buildPrefsWidget() {
     let widget = new Settings();
-    widget.show_all();
+    widget.w.show_all();
 
-    return widget;
+    return widget.w;
 }

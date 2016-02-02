@@ -1,17 +1,22 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.topicons" path="/org/gnome/shell/extensions/topicons/">
-    <key name="icon-saturation" type="b">
-      <default>true</default>
+    <key name="icon-saturation" type="d">
+      <default>0.375</default>
       <summary>Saturation</summary>
     </key>
-    <key name="icon-opacity" type="b">
-      <default>true</default>
+    <key name="icon-opacity" type="i">
+      <default>220</default>
       <summary>Opacity</summary>
     </key>
     <key name="icon-size" type="i">
       <default>24</default>
       <summary>Icon size</summary>
       <description>Icon size in pixel</description>
+    </key>
+    <key name="icon-padding" type="i">
+      <default>10</default>
+      <summary>Icon padding</summary>
+      <description>Icon padding within the tray</description>
     </key>
     <key name="tray-pos" type="s">
       <default>"right"</default>

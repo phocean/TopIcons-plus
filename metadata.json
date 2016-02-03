@@ -8,5 +8,5 @@
   "settings-schema": "org.gnome.shell.extensions.topicons",
   "url": "https://github.com/phocean/topicons",
   "uuid": "TopIcons@phocean.net",
-  "version": 2
+  "version": 3
 }

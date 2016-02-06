@@ -1,12 +1,12 @@
 {
-  "description": "Shows legacy tray icons in the top panel. It now has settings for icon opacity, saturation, padding, size and tray position.",
-  "name": "TopIcons",
-  "gettext-domain": "TopIcons",
+  "description": "This extension moves legacy tray icons (bottom left of Gnome Shell) to the top panel. It is a fork from the original extension from ag  with settings for icon opacity, saturation, padding, size and tray position, along with a few minor fixes.",
+  "name": "TopIcons Plus",
+  "gettext-domain": "TopIcons-plus",
   "shell-version": [
     "3.16", "3.18"
   ], 
   "settings-schema": "org.gnome.shell.extensions.topicons",
-  "url": "https://github.com/phocean/topicons",
+  "url": "https://github.com/phocean/TopIcons-plus",
   "uuid": "TopIcons@phocean.net",
-  "version": 3
+  "version": 6
 }

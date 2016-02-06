@@ -1,4 +1,4 @@
-# TopIcons
+# TopIcons Plus
 
 ![Screenshot](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
 

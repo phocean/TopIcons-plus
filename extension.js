@@ -256,14 +256,14 @@ function refreshSaturation() {
 }
 
 function refreshSize() {
-    iconSize = settings.get_int('icon-size');
+    let iconSize = settings.get_int('icon-size');
     for (let i=0; i<icons.length; i++)
         applySize(icons[i]);
 }
 
 function refreshTray() {
     moveToTray();
-    moveToTop();
+    moveToTop()
 }
 
 function refreshPos() {

@@ -1,7 +1,7 @@
 {
   "description": "This extension moves legacy tray icons (bottom left of Gnome Shell) to the top panel. It is a fork from the original extension from ag  with settings for icon opacity, saturation, padding, size and tray position, along with a few minor fixes.",
   "name": "TopIcons Plus",
-  "gettext-domain": "TopIcons-plus",
+  "gettext-domain": "TopIcons-Plus",
   "shell-version": [
     "3.16", "3.18"
   ], 

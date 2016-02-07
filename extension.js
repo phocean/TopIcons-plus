@@ -10,16 +10,16 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-let settings;
+let settings = null;
 
-let tray;
+let tray = null;
 let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
 // Separators provide extra padding between tray icons and panel buttons
-let separatorLeft;
-let separatorRight;
+let separatorLeft = null;
+let separatorRight = null;
 
 function init() {
     settings = Convenience.getSettings();
@@ -39,12 +39,7 @@ function enable() {
 
 function disable() {
     moveToTray();
-    settings.disconnect('changed::icon-opacity');
-    settings.disconnect('changed::icon-staturation');
-    settings.disconnect('changed::icon-size');
-    settings.disconnect('changed::icon-padding');
-    settings.disconnect('changed::tray-pos');
-    settings.disconnect('changed::tray-order');
+    settings.run_dispose();
 }
 
 function onTrayIconAddedDelayed(o, icon, role) {
@@ -74,7 +69,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     iconContainer.connect('button-release-event', function(actor, event) {
         icon.click(event);
     });
-
+    
     // Apply user settings
     applyPreferences(icon);
     
@@ -98,6 +93,22 @@ function onTrayIconAdded(o, icon, role, delay) {
 
         return GLib.SOURCE_REMOVE;
     }));
+    
+    iconBlacklist(icon, wmClass);
+    
+}
+
+// hides some icon if a given extension is enabled
+function iconBlacklist(icon, wmClass) {
+    let uuids = [];
+    // blacklist: array of uuid and wmClass (icon application name)
+    uuids.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
+    // loop through the array and hide the extension if extension X is enabled and corresponding application is running
+    for (let i = 0; i < uuids.length; i++) {
+      if(wmClass == uuids[i][0] && imports.misc.extensionUtils.extensions[uuids[i][1]].state == 1) {
+        icon.hide();
+      }
+    }
 }
 
 function onTrayIconRemoved(o, icon) {
@@ -184,9 +195,6 @@ function moveToTray() {
     // Clean and move each icon back to the Legacy Tray;
     for (let i = 0; i < icons.length; i++) {
         let icon = icons[i];
-        if (icon._clicked)
-            icon.disconnect(icon._clicked);
-        icon._clicked = undefined;
         icon.opacity = 255;
         icon.clear_effects();
 
@@ -196,7 +204,7 @@ function moveToTray() {
 
         tray._onTrayIconAdded(tray, icon);
     }
-    
+        
     icons = [];
 }
 
@@ -223,8 +231,8 @@ function applyOpacity(icon) {
     icon.opacityLeaveId = icon.connect('leave-event', function(actor, event) {
         icon.opacity = opacityValue;
     });
-    icon.disconnect('enter-event');
-    icon.disconnect('leave-event');
+    //icon.disconnect('enter-event');
+    //icon.disconnect('leave-event');
     icon.opacity = opacityValue;
 }
 

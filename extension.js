@@ -83,33 +83,33 @@ function onTrayIconAdded(o, icon, role, delay) {
         Main.panel._rightBox.insert_child_at_index(iconContainer, index);
     }
 
-    // Some icons won't appear on application start. As a workaround, 
-    // we delay their visibility.
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
-        iconContainer.visible = true;
-    
-        separatorLeft.visible = true;
-        separatorRight.visible = true;
-
-        return GLib.SOURCE_REMOVE;
-    }));
-    
-    iconBlacklist(icon, wmClass);
-    
-}
-
-// hides some icon if a given extension is enabled
-function iconBlacklist(icon, wmClass) {
-    let uuids = [];
+    // Display icons (with a blacklist filter for specific extension like Skype integration)
+    let blacklist = [];
     // blacklist: array of uuid and wmClass (icon application name)
-    uuids.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
+    blacklist.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
     // loop through the array and hide the extension if extension X is enabled and corresponding application is running
-    for (let i = 0; i < uuids.length; i++) {
-      if(wmClass == uuids[i][0] && imports.misc.extensionUtils.extensions[uuids[i][1]].state == 1) {
-        icon.hide();
-      }
+    for (let i = 0; i < blacklist.length; i++) {
+        if(wmClass == blacklist[i][0] && imports.misc.extensionUtils.extensions[blacklist[i][1]].state == 1) {
+            // Some icons won't appear on application start. As a workaround, 
+            // we delay their visibility.
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
+                iconContainer.visible = false;
+                separatorLeft.visible = false;
+                separatorRight.visible = false;
+                return GLib.SOURCE_REMOVE;
+            }));
+        }
+    else {
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
+                iconContainer.visible = true;
+                separatorLeft.visible = true;
+                separatorRight.visible = true;
+                return GLib.SOURCE_REMOVE;
+            }));
+        }
     }
 }
+
 
 function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
@@ -168,7 +168,6 @@ function moveToTop() {
         let icon = button.child;
         button.remove_actor(icon);
         button.destroy();
-
         // Icon already loaded, no need to delay insertion
         onTrayIconAdded(this, icon, '', 0);
     }
@@ -231,8 +230,6 @@ function applyOpacity(icon) {
     icon.opacityLeaveId = icon.connect('leave-event', function(actor, event) {
         icon.opacity = opacityValue;
     });
-    //icon.disconnect('enter-event');
-    //icon.disconnect('leave-event');
     icon.opacity = opacityValue;
 }
 

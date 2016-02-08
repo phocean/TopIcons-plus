@@ -1,5 +1,5 @@
 {
-  "description": "This extension moves legacy tray icons (bottom left of Gnome Shell) to the top panel. It is a fork from the original extension from ag  with settings for icon opacity, saturation, padding, size and tray position, along with a few minor fixes.",
+  "description": "This extension moves legacy tray icons (bottom left of Gnome Shell) to the top panel. It is a fork from the original extension from ag  with settings for icon opacity, saturation, padding, size and tray position, along with a few minor fixes and integration with the Skype integration extension.",
   "name": "TopIcons Plus",
   "gettext-domain": "TopIcons-Plus",
   "shell-version": [
@@ -8,5 +8,5 @@
   "settings-schema": "org.gnome.shell.extensions.topicons",
   "url": "https://github.com/phocean/TopIcons-plus",
   "uuid": "TopIcons@phocean.net",
-  "version": 6
+  "version": 7
 }

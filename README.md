@@ -2,7 +2,7 @@
 
 ![Screenshot 1](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
 
-![Screenshot 2](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
+![Screenshot 2](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot_2.png)
 
 An alternative to GNOME Shell's Legacy Tray, making use of the top panel.
 

@@ -89,23 +89,33 @@ function onTrayIconAdded(o, icon, role, delay) {
     blacklist.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
     // loop through the array and hide the extension if extension X is enabled and corresponding application is running
     for (let i = 0; i < blacklist.length; i++) {
-        if(wmClass == blacklist[i][0] && imports.misc.extensionUtils.extensions[blacklist[i][1]].state == 1) {
-            // Some icons won't appear on application start. As a workaround, 
-            // we delay their visibility.
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
-                iconContainer.visible = false;
-                separatorLeft.visible = false;
-                separatorRight.visible = false;
-                return GLib.SOURCE_REMOVE;
-            }));
+        if (imports.misc.extensionUtils.extensions[blacklist[i][1]] !== undefined) {
+            if(wmClass == blacklist[i][0] && imports.misc.extensionUtils.extensions[blacklist[i][1]].state == 1) {
+                // Some icons won't appear on application start. As a workaround, 
+                // we delay their visibility.
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
+                    iconContainer.visible = false;
+                    separatorLeft.visible = false;
+                    separatorRight.visible = false;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            }
+            else {
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
+                    iconContainer.visible = true;
+                    separatorLeft.visible = true;
+                    separatorRight.visible = true;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            }
         }
-    else {
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
-                iconContainer.visible = true;
-                separatorLeft.visible = true;
-                separatorRight.visible = true;
-                return GLib.SOURCE_REMOVE;
-            }));
+        else {
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function() {
+                    iconContainer.visible = true;
+                    separatorLeft.visible = true;
+                    separatorRight.visible = true;
+                    return GLib.SOURCE_REMOVE;
+                }));
         }
     }
 }

@@ -67,7 +67,7 @@ const Settings = new Lang.Class({
         let label = new Gtk.Label({label: _("Size"), xalign: 0});
         let widget = new Gtk.SpinButton({halign:Gtk.Align.END});
         widget.set_sensitive(true);
-        widget.set_range(0, 32);
+        widget.set_range(0, 512);
         widget.set_value(this._settings.get_int('icon-size'));
         widget.set_increments(1, 2);
         widget.connect('value-changed', Lang.bind(this, function(w){

@@ -62,7 +62,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     icon.set_pivot_point(0.5, 0.5);
     icon.set_scale(scaleFactor, scaleFactor);
 
-    let iconContainer = new St.Button({child : icon, visible : false});
+    let iconContainer = new St.Button({child: icon, visible: false});
     applyPadding(iconContainer);
 
     icon.connect("destroy", function() {

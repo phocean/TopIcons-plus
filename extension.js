@@ -54,10 +54,13 @@ function onTrayIconAdded(o, icon, role, delay) {
     icons.push(icon);
 
     // Icon properties
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
+
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+    icon.set_pivot_point(0.5, 0.5);
+    icon.set_scale(scaleFactor, scaleFactor);
 
     let iconContainer = new St.Button({child: icon, visible: false});
     applyPadding(iconContainer);
@@ -239,7 +242,8 @@ function applySize(icon) {
 }
 
 function applyPadding(iconContainer) {
-    let paddingValue = settings.get_int('icon-padding');
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+    let paddingValue = settings.get_int('icon-padding') * scaleFactor;
     iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
 }
 
@@ -262,8 +266,9 @@ function refreshSaturation() {
 
 function refreshSize() {
     let iconSize = settings.get_int('icon-size');
-    for (let i=0; i<icons.length; i++)
+    for (let i=0; i<icons.length; i++) {
         applySize(icons[i]);
+    }
 }
 
 function refreshTray() {

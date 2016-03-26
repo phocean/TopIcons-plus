@@ -129,9 +129,13 @@ function onTrayIconRemoved(o, icon) {
 }
 
 function addSeperator() {
-    let separator = new St.Bin({visible: false}); 
+    let separator =null; 
     let trayPosition = settings.get_string('tray-pos'); 
     let trayOrder = settings.get_int('tray-order');
+
+    while (separator == null) {
+        separator = new St.Bin({visible: false});
+    }
 
     // 8px = 12px (panel button padding) - 4px (icon container padding)
     separator.set_style('width: 8px;'); 

@@ -59,10 +59,11 @@ function onTrayIconAdded(o, icon, role, delay) {
     let trayOrder = settings.get_int('tray-order');
 
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    icon.set_pivot_point(0.5, 0.5);
-    icon.set_scale(scaleFactor, scaleFactor);
+    //icon.set_pivot_point(0.5, 0.5);
+    //icon.set_scale(scaleFactor, scaleFactor);
+    icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
-    let iconContainer = new St.Button({child: icon, visible: false});
+    let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
     applyPadding(iconContainer);
 
     icon.connect("destroy", function() {
@@ -74,7 +75,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     });
     
     // Apply user settings
-    applyPreferences(icon);
+    applyPreferences(icon, scaleFactor);
     
     // Insert icon container before right separator
     if (trayPosition == 'left') {
@@ -132,9 +133,10 @@ function addSeperator() {
     let separator =null; 
     let trayPosition = settings.get_string('tray-pos'); 
     let trayOrder = settings.get_int('tray-order');
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
     while (separator == null) {
-        separator = new St.Bin({visible: false});
+        separator = new St.Bin({visible: false, width: 24*scaleFactor, height: 24*scaleFactor});
     }
 
     // 8px = 12px (panel button padding) - 4px (icon container padding)
@@ -216,10 +218,10 @@ function moveToTray() {
 
 // These functions read settings and apply user preferences per icon
 
-function applyPreferences(icon) {
+function applyPreferences(icon, scaleFactor) {
     applyOpacity(icon);
     applySaturation(icon);
-    applySize(icon);
+    applySize(icon, scaleFactor);
 }
 
 function applySaturation(icon) {
@@ -240,14 +242,14 @@ function applyOpacity(icon) {
     icon.opacity = opacityValue;
 }
 
-function applySize(icon) {
+function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
-    icon.set_size(iconSize, iconSize)
+    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
 }
 
 function applyPadding(iconContainer) {
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    let paddingValue = settings.get_int('icon-padding') * scaleFactor;
+    let paddingValue = settings.get_int('icon-padding') * 1;
     iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
 }
 

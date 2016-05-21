@@ -1,4 +1,24 @@
-// -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+/*
+Copyright (C) phocean <jc@phocean.net>
+
+Credits to:
+ - "ag" for the original extension,
+ - "Mjnaderi" for the Toptray first fork.
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 
 const St = imports.gi.St;
 const Main = imports.ui.main;
@@ -59,10 +79,11 @@ function onTrayIconAdded(o, icon, role, delay) {
     let trayOrder = settings.get_int('tray-order');
 
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    icon.set_pivot_point(0.5, 0.5);
-    icon.set_scale(scaleFactor, scaleFactor);
+    //icon.set_pivot_point(0.5, 0.5);
+    //icon.set_scale(scaleFactor, scaleFactor);
+    icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
-    let iconContainer = new St.Button({child: icon, visible: false});
+    let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
     applyPadding(iconContainer);
 
     icon.connect("destroy", function() {
@@ -74,7 +95,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     });
     
     // Apply user settings
-    applyPreferences(icon);
+    applyPreferences(icon, scaleFactor);
     
     // Insert icon container before right separator
     if (trayPosition == 'left') {
@@ -129,9 +150,14 @@ function onTrayIconRemoved(o, icon) {
 }
 
 function addSeperator() {
-    let separator = new St.Bin({visible: false}); 
+    let separator =null; 
     let trayPosition = settings.get_string('tray-pos'); 
     let trayOrder = settings.get_int('tray-order');
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+
+    while (separator == null) {
+        separator = new St.Bin({visible: false, width: 24*scaleFactor, height: 24*scaleFactor});
+    }
 
     // 8px = 12px (panel button padding) - 4px (icon container padding)
     separator.set_style('width: 8px;'); 
@@ -212,10 +238,10 @@ function moveToTray() {
 
 // These functions read settings and apply user preferences per icon
 
-function applyPreferences(icon) {
+function applyPreferences(icon, scaleFactor) {
     applyOpacity(icon);
     applySaturation(icon);
-    applySize(icon);
+    applySize(icon, scaleFactor);
 }
 
 function applySaturation(icon) {
@@ -236,14 +262,14 @@ function applyOpacity(icon) {
     icon.opacity = opacityValue;
 }
 
-function applySize(icon) {
+function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
-    icon.set_size(iconSize, iconSize)
+    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
 }
 
 function applyPadding(iconContainer) {
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    let paddingValue = settings.get_int('icon-padding') * scaleFactor;
+    let paddingValue = settings.get_int('icon-padding') * 1;
     iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
 }
 

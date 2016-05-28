@@ -37,9 +37,6 @@ let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
-// Separators provide extra padding between tray icons and panel buttons
-let separatorLeft = null;
-let separatorRight = null;
 
 function init() {
     settings = Convenience.getSettings();
@@ -117,8 +114,6 @@ function onTrayIconAdded(o, icon, role, delay) {
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
             {
                 iconContainer.visible = false;
-                separatorLeft.visible = false;
-                separatorRight.visible = false;
                 return GLib.SOURCE_REMOVE;
             }));
         }
@@ -126,8 +121,6 @@ function onTrayIconAdded(o, icon, role, delay) {
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
             {
                 iconContainer.visible = true;
-                separatorLeft.visible = true;
-                separatorRight.visible = true;
                 return GLib.SOURCE_REMOVE;
             }));
         }
@@ -141,12 +134,6 @@ function onTrayIconRemoved(o, icon) {
     icon.destroy();
 
     icons.splice(icons.indexOf(icon), 1);
-    
-    // Separators are hidden when no icons are present
-    if(icons.length == 0) {
-        separatorLeft.visible = false;
-        separatorRight.visible = false;
-    }
 }
 
 function addSeperator() {
@@ -179,9 +166,6 @@ function widgetNumber() {
 }
 
 function moveToTop() {
-    separatorLeft = addSeperator();
-    separatorRight = addSeperator();
-
     // Replace signal handlers;
     tray._trayManager.disconnect(tray._trayIconAddedId);
     tray._trayManager.disconnect(tray._trayIconRemovedId);
@@ -203,9 +187,6 @@ function moveToTop() {
 }
 
 function moveToTray() {
-    separatorLeft.destroy();
-    separatorRight.destroy();
-
     // Restore signal handlers
     if (trayAddedId != 0) {
         tray._trayManager.disconnect(trayAddedId);

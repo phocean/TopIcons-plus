@@ -48,6 +48,8 @@ function enable() {
     trayIconImplementations = imports.ui.legacyTray.STANDARD_TRAY_ICON_IMPLEMENTATIONS;
     settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
+    settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
+    settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
     settings.connect('changed::icon-padding', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
@@ -221,6 +223,7 @@ function moveToTray() {
 
 function applyPreferences(icon, scaleFactor) {
     applyOpacity(icon);
+    applyBrightnessContrast(icon);
     applySaturation(icon);
     applySize(icon, scaleFactor);
 }
@@ -230,6 +233,15 @@ function applySaturation(icon) {
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
     icon.add_effect(effect);
     effect.set_factor(desaturationValue);
+}
+
+function applyBrightnessContrast(icon) {
+    let brightnessValue = settings.get_double('icon-brightness');
+    let contrastValue =  settings.get_double('icon-contrast');
+    let effect = new Clutter.BrightnessContrastEffect({});
+    effect.set_brightness(brightnessValue);
+    effect.set_contrast(contrastValue);
+    icon.add_effect(effect);
 }
 
 function applyOpacity(icon) {
@@ -267,6 +279,14 @@ function refreshSaturation() {
     for (let i = 0; i < icons.length; i++) {
         let icon = icons[i];
         applySaturation(icon);
+    }
+    refreshTray();
+}
+
+function refreshBrightnessContrast() {
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        applyBrightnessContrast(icon);
     }
     refreshTray();
 }

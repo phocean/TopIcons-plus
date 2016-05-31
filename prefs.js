@@ -62,6 +62,38 @@ const Settings = new Lang.Class({
         hbox.add(widget);
         this.w.add(hbox);
 
+        // Icon brightness
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: "Brightness", xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        widget.set_sensitive(true);
+        widget.set_range(-1.000, 1.000);
+        widget.set_value(this._settings.get_double('icon-brightness'));
+        widget.set_increments(0.001, 0.010);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value();
+            this._settings.set_double('icon-brightness', value);
+         }));
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
+
+        // Icon contrast
+        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
+        let label = new Gtk.Label({label: "Contrast", xalign: 0});
+        let widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        widget.set_sensitive(true);
+        widget.set_range(-1.000, 1.000);
+        widget.set_value(this._settings.get_double('icon-contrast'));
+        widget.set_increments(0.001, 0.010);
+        widget.connect('value-changed', Lang.bind(this, function(w){
+            let value = w.get_value();
+            this._settings.set_double('icon-contrast', value);
+         }));
+        hbox.pack_start(label, true, true, 0);
+        hbox.add(widget);
+        this.w.add(hbox);
+
         // Icon size
         let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
         let label = new Gtk.Label({label: _("Size"), xalign: 0});

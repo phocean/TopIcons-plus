@@ -37,6 +37,7 @@ let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
+let iconsBoxLayout = null;
 
 function init() {
     settings = Convenience.getSettings();
@@ -94,15 +95,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     // Apply user settings
     applyPreferences(icon, scaleFactor);
     
-    // Insert icon container before right separator
-    if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
-        Main.panel._leftBox.insert_child_at_index(iconContainer, index);
-    }
-    else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
-        Main.panel._rightBox.insert_child_at_index(iconContainer, index);
-    }
+    iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
     // Display icons (with a blacklist filter for specific extension like Skype integration)
     let blacklist = [];
@@ -136,31 +129,6 @@ function onTrayIconRemoved(o, icon) {
     icons.splice(icons.indexOf(icon), 1);
 }
 
-function addSeperator() {
-    let separator =null; 
-    let trayPosition = settings.get_string('tray-pos'); 
-    let trayOrder = settings.get_int('tray-order');
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-
-    while (separator == null) {
-        separator = new St.Bin({visible: false, width: 24*scaleFactor, height: 24*scaleFactor});
-    }
-
-    // 8px = 12px (panel button padding) - 4px (icon container padding)
-    separator.set_style('width: 8px;'); 
-
-    if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder;
-        Main.panel._leftBox.insert_child_at_index(separator, index);
-    }
-    else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder;
-        Main.panel._rightBox.insert_child_at_index(separator, index);
-    }
-    
-    return separator;
-}
-
 function widgetNumber() {
     return Main.panel._leftBox.get_n_children();
 }
@@ -173,7 +141,26 @@ function moveToTop() {
         'tray-icon-added', onTrayIconAddedDelayed);
     trayRemovedId = tray._trayManager.connect(
         'tray-icon-removed', onTrayIconRemoved);
-    
+   
+    // Create box layout for icon containers 
+    iconsBoxLayout = new St.BoxLayout();
+
+    // 12px = panel button padding
+    let boxLayoutPadding = settings.get_int('icon-padding');
+    boxLayoutPadding = Math.max(12 - boxLayoutPadding, 0);
+    iconsBoxLayout.set_style('padding: 0px ' + boxLayoutPadding + 'px;');
+
+    let trayPosition = settings.get_string('tray-pos');
+    let trayOrder = settings.get_int('tray-order');
+    if (trayPosition == 'left') {
+        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
+        Main.panel._leftBox.insert_child_at_index(iconsBoxLayout, index);
+    }
+    else {
+        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
+        Main.panel._rightBox.insert_child_at_index(iconsBoxLayout, index);
+    }
+
     // Move each tray icon to the top;
     let length = tray._iconBox.get_n_children();
     for (let i = 0; i < length; i++) {
@@ -215,6 +202,7 @@ function moveToTray() {
     }
         
     icons = [];
+    iconsBoxLayout.destroy();
 }
 
 // These functions read settings and apply user preferences per icon
@@ -250,7 +238,7 @@ function applySize(icon, scaleFactor) {
 
 function applyPadding(iconContainer) {
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    let paddingValue = settings.get_int('icon-padding') * 1;
+    let paddingValue = settings.get_int('icon-padding');
     iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
 }
 

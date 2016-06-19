@@ -25,15 +25,12 @@ const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
-
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
 let settings = null;
-
 let tray = null;
-let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
@@ -74,13 +71,12 @@ function onTrayIconAdded(o, icon, role, delay) {
     icons.push(icon);
 
     // Icon properties
+    
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
 
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    //icon.set_pivot_point(0.5, 0.5);
-    //icon.set_scale(scaleFactor, scaleFactor);
     icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
     let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
@@ -90,16 +86,17 @@ function onTrayIconAdded(o, icon, role, delay) {
         icon.clear_effects();
         iconContainer.destroy();
     });
+
     iconContainer.connect('button-release-event', function(actor, event) {
         icon.click(event);
     });
-    
-    // Apply user settings
-    applyPreferences(icon, scaleFactor);
+
+    applyPreferences(icon, scaleFactor); // user settings
     
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
     // Display icons (with a blacklist filter for specific extension like Skype integration)
+    
     let blacklist = [];
     // blacklist: array of uuid and wmClass (icon application name)
     blacklist.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
@@ -136,22 +133,16 @@ function widgetNumber() {
 }
 
 function moveToTop() {
-    // Replace signal handlers;
+    // Replace signal handlers
     tray._trayManager.disconnect(tray._trayIconAddedId);
     tray._trayManager.disconnect(tray._trayIconRemovedId);
-    trayAddedId = tray._trayManager.connect(
-        'tray-icon-added', onTrayIconAddedDelayed);
-    trayRemovedId = tray._trayManager.connect(
-        'tray-icon-removed', onTrayIconRemoved);
-   
+    trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAddedDelayed);
+    trayRemovedId = tray._trayManager.connect('tray-icon-removed', onTrayIconRemoved);
+
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
 
-    // 12px = panel button padding
-    let boxLayoutPadding = settings.get_int('icon-padding');
-    boxLayoutPadding = Math.max(12 - boxLayoutPadding, 0);
-    iconsBoxLayout.set_style('padding: 0px ' + boxLayoutPadding + 'px;');
-
+    // Position
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
     if (trayPosition == 'left') {
@@ -163,7 +154,7 @@ function moveToTop() {
         Main.panel._rightBox.insert_child_at_index(iconsBoxLayout, index);
     }
 
-    // Move each tray icon to the top;
+    // Move each tray icon to the top
     let length = tray._iconBox.get_n_children();
     for (let i = 0; i < length; i++) {
         let button = tray._iconBox.get_child_at_index(0);
@@ -176,15 +167,9 @@ function moveToTop() {
 }
 
 function moveToTray() {
-    // Restore signal handlers
-    if (trayAddedId != 0) {
-        tray._trayManager.disconnect(trayAddedId);
-        trayAddedId = 0;
-    }
-    if (trayRemovedId != 0) {
-        tray._trayManager.disconnect(trayRemovedId);
-        trayRemovedId = 0;
-    }
+    // Replace signal handlers
+    tray._trayManager.disconnect(trayAddedId);
+    tray._trayManager.disconnect(trayRemovedId);
     tray._trayIconAddedId = tray._trayManager.connect(
         'tray-icon-added', Lang.bind(tray, tray._onTrayIconAdded));
     tray._trayIconRemovedId = tray._trayManager.connect(
@@ -202,7 +187,6 @@ function moveToTray() {
 
         tray._onTrayIconAdded(tray, icon);
     }
-        
     icons = [];
     iconsBoxLayout.destroy();
 }

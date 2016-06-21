@@ -83,11 +83,6 @@ GNOME Shell 3.16 and up.
 
 Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
 
-Also, for their contributions to the code, thanks to:
-
-- nevesnunes 
-- alemax-xyz 
-
 ## Notes
 
 The extension is pending review on https://extensions.gnome.org, so hopefully it will be validated so that it is easier to install soon.

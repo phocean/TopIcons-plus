@@ -36,14 +36,13 @@ let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
 
-function init() {
-    settings = Convenience.getSettings();
-}
+function init() { }
 
 function enable() {
     GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
     trayIconImplementations = imports.ui.legacyTray.STANDARD_TRAY_ICON_IMPLEMENTATIONS;
+    settings = Convenience.getSettings();
     settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
     settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
@@ -75,24 +74,20 @@ function onTrayIconAdded(o, icon, role, delay) {
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
-
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
     icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
+    // Container
     let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
     applyPadding(iconContainer);
-
     icon.connect("destroy", function() {
         icon.clear_effects();
         iconContainer.destroy();
     });
-
     iconContainer.connect('button-release-event', function(actor, event) {
         icon.click(event);
     });
-
     applyPreferences(icon, scaleFactor); // user settings
-    
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
     // Display icons (with a blacklist filter for specific extension like Skype integration)
@@ -124,7 +119,6 @@ function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
     parent.destroy();
     icon.destroy();
-
     icons.splice(icons.indexOf(icon), 1);
 }
 
@@ -180,11 +174,9 @@ function moveToTray() {
         let icon = icons[i];
         icon.opacity = 255;
         icon.clear_effects();
-
         let parent = icon.get_parent();
         parent.remove_actor(icon);
         parent.destroy();
-
         tray._onTrayIconAdded(tray, icon);
     }
     icons = [];

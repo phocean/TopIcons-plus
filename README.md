@@ -1,12 +1,32 @@
 # TopIcons Plus
 
-![Screenshot 1](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
+## Introduction
 
-![Screenshot 2](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot_2.png)
+![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
 
-An alternative to GNOME Shell's Legacy Tray, making use of the top panel.
+Topicons Plus is an alternative to the Gnome Shell Legacy Tray, which is hidden most of the time and generally considered inconvenient.
 
-I had a few issues with the original TopIcons extension: it froze when changing the screen geometry, like enable an external monitor. Also, I found a few forks like TopTray with some good ideas, like settings for icon size and colors. So I simply merged them all in a better extension.
+It brings all icons to back to the top panel, as with most desktop environments.
+
+There were an original TopIcons extension for that, but it stopped being maintained and it had a few issues and little configuration options.
+Thus, this fork.
+
+Before (standard Gnome legacy tray):
+
+![Before](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/before.png)
+
+After (slight opacity tweaking):
+
+![After (1)](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after_1.png)
+
+
+After (saturation tweaking):
+
+![After (2)](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after_2.png)
+
+
+Enjoy it!
+
 
 ## Installation
 

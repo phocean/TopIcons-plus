@@ -30,6 +30,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
+const PanelMenu = imports.ui.panelMenu;
+
 let settings = null;
 
 let tray = null;
@@ -38,6 +40,7 @@ let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
+let iconsContainer = null;
 
 function init() {
     settings = Convenience.getSettings();
@@ -82,7 +85,7 @@ function onTrayIconAdded(o, icon, role, delay) {
     icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
     let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
-    applyPadding(iconContainer);
+    //applyPadding(iconContainer);
 
     icon.connect("destroy", function() {
         icon.clear_effects();
@@ -134,6 +137,30 @@ function widgetNumber() {
 }
 
 function moveToTop() {
+    // Create box layout for icon containers 
+    iconsBoxLayout = new St.BoxLayout();
+
+    let boxLayoutPadding = settings.get_int('icon-padding');
+    iconsBoxLayout.set_style('spacing: ' + boxLayoutPadding + 'px;');
+
+    iconsContainer = new PanelMenu.ButtonBox();
+    let iconsContainerActor = iconsContainer.actor;
+    iconsContainerActor.add_actor(iconsBoxLayout);
+    let parent = iconsContainerActor.get_parent();
+    if (parent)
+        parent.remove_actor(iconsContainerActor);
+
+    let trayPosition = settings.get_string('tray-pos');
+    let trayOrder = settings.get_int('tray-order');
+    if (trayPosition == 'left') {
+        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
+        Main.panel._leftBox.insert_child_at_index(iconsContainerActor, index);
+    }
+    else {
+        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
+        Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
+    }
+
     // Replace signal handlers;
     tray._trayManager.disconnect(tray._trayIconAddedId);
     tray._trayManager.disconnect(tray._trayIconRemovedId);
@@ -142,25 +169,6 @@ function moveToTop() {
     trayRemovedId = tray._trayManager.connect(
         'tray-icon-removed', onTrayIconRemoved);
    
-    // Create box layout for icon containers 
-    iconsBoxLayout = new St.BoxLayout();
-
-    // 12px = panel button padding
-    let boxLayoutPadding = settings.get_int('icon-padding');
-    boxLayoutPadding = Math.max(12 - boxLayoutPadding, 0);
-    iconsBoxLayout.set_style('padding: 0px ' + boxLayoutPadding + 'px;');
-
-    let trayPosition = settings.get_string('tray-pos');
-    let trayOrder = settings.get_int('tray-order');
-    if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
-        Main.panel._leftBox.insert_child_at_index(iconsBoxLayout, index);
-    }
-    else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
-        Main.panel._rightBox.insert_child_at_index(iconsBoxLayout, index);
-    }
-
     // Move each tray icon to the top;
     let length = tray._iconBox.get_n_children();
     for (let i = 0; i < length; i++) {
@@ -202,7 +210,16 @@ function moveToTray() {
     }
         
     icons = [];
-    iconsBoxLayout.destroy();
+    if (iconsBoxLayout != null) {
+        iconsBoxLayout.destroy();
+        iconsBoxLayout = null;
+    }
+    if (iconsContainer != null) {
+        if (iconsContainer.actor != null) {
+            iconsContainer.actor.destroy();
+        }
+        iconsContainer = null;
+    }
 }
 
 // These functions read settings and apply user preferences per icon
@@ -222,12 +239,13 @@ function applySaturation(icon) {
 
 function applyOpacity(icon) {
     let opacityValue = settings.get_int('icon-opacity');
-    icon.opacityEnterId = icon.connect('enter-event', function(actor, event) {
-        icon.opacity = 255;
-    });
-    icon.opacityLeaveId = icon.connect('leave-event', function(actor, event) {
-        icon.opacity = opacityValue;
-    });
+
+    // Apply mouse events to iconContainer,
+    // since click events are also received by it
+    icon.opacityEnterId = icon.get_parent().connect(
+        'enter-event', function(actor, event) { icon.opacity = 255; });
+    icon.opacityLeaveId = icon.get_parent().connect(
+        'leave-event', function(actor, event) { icon.opacity = opacityValue; });
     icon.opacity = opacityValue;
 }
 

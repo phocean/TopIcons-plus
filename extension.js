@@ -58,19 +58,9 @@ function disable() {
     settings.run_dispose();
 }
 
-function onTrayIconAddedDelayed(o, icon, role) {
-    onTrayIconAdded(o, icon, role, 2500);
-}
-
-function onTrayIconAdded(o, icon, role, delay) {
-    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
-    if (trayIconImplementations[wmClass] !== undefined)
-        return;
-
-    icons.push(icon);
+function onTrayIconAdded(o, icon, role, delay=500) {
 
     // Icon properties
-    
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
@@ -112,6 +102,8 @@ function onTrayIconAdded(o, icon, role, delay) {
             }));
         }
     }
+
+    icons.push(icon);
 }
 
 
@@ -130,7 +122,7 @@ function moveToTop() {
     // Replace signal handlers
     tray._trayManager.disconnect(tray._trayIconAddedId);
     tray._trayManager.disconnect(tray._trayIconRemovedId);
-    trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAddedDelayed);
+    trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAdded);
     trayRemovedId = tray._trayManager.connect('tray-icon-removed', onTrayIconRemoved);
 
     // Create box layout for icon containers 

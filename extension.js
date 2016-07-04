@@ -25,16 +25,19 @@ const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
+const PanelMenu = imports.ui.panelMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
 let settings = null;
 let tray = null;
+let trayIconImplementations = null;
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
+let iconsContainer = null;
 
 function init() { }
 
@@ -48,7 +51,7 @@ function enable() {
     settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
-    settings.connect('changed::icon-padding', Lang.bind(this, refreshTray));
+    settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
     settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
 }
@@ -69,7 +72,7 @@ function onTrayIconAdded(o, icon, role, delay=500) {
 
     // Container
     let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
-    applyPadding(iconContainer);
+
     icon.connect("destroy", function() {
         icon.clear_effects();
         iconContainer.destroy();
@@ -98,6 +101,7 @@ function onTrayIconAdded(o, icon, role, delay=500) {
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
             {
                 iconContainer.visible = true;
+                iconsContainer.actor.visible = true;
                 return GLib.SOURCE_REMOVE;
             }));
         }
@@ -106,12 +110,14 @@ function onTrayIconAdded(o, icon, role, delay=500) {
     icons.push(icon);
 }
 
-
 function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
     parent.destroy();
     icon.destroy();
     icons.splice(icons.indexOf(icon), 1);
+
+    if (icons.length === 0)
+        iconsContainer.actor.visible = false;
 }
 
 function widgetNumber() {
@@ -127,17 +133,28 @@ function moveToTop() {
 
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
+    let boxLayoutSpacing = settings.get_int('icon-spacing');
+    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px;');
+
+    // An empty ButtonBox will still display padding,
+    // therefore create it without visibility.
+    iconsContainer = new PanelMenu.ButtonBox({visible: false});
+    let iconsContainerActor = iconsContainer.actor;
+    iconsContainerActor.add_actor(iconsBoxLayout);
+    let parent = iconsContainerActor.get_parent();
+    if (parent)
+        parent.remove_actor(iconsContainerActor);
 
     // Position
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
     if (trayPosition == 'left') {
         let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
-        Main.panel._leftBox.insert_child_at_index(iconsBoxLayout, index);
+        Main.panel._leftBox.insert_child_at_index(iconsContainerActor, index);
     }
     else {
         let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
-        Main.panel._rightBox.insert_child_at_index(iconsBoxLayout, index);
+        Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
     }
 
     // Move each tray icon to the top
@@ -154,8 +171,14 @@ function moveToTop() {
 
 function moveToTray() {
     // Replace signal handlers
-    tray._trayManager.disconnect(trayAddedId);
-    tray._trayManager.disconnect(trayRemovedId);
+    if (trayAddedId !== 0) {
+        tray._trayManager.disconnect(trayAddedId);
+        trayAddedId = 0;
+    }
+    if (trayRemovedId !== 0) {
+        tray._trayManager.disconnect(trayRemovedId);
+        trayRemovedId = 0;
+    }
     tray._trayIconAddedId = tray._trayManager.connect(
         'tray-icon-added', Lang.bind(tray, tray._onTrayIconAdded));
     tray._trayIconRemovedId = tray._trayManager.connect(
@@ -171,8 +194,20 @@ function moveToTray() {
         parent.destroy();
         tray._onTrayIconAdded(tray, icon);
     }
+
+    // Clean containers
     icons = [];
-    iconsBoxLayout.destroy();
+    if (iconsBoxLayout !== null) {
+        iconsBoxLayout.destroy();
+        iconsBoxLayout = null;
+    }
+    if (iconsContainer !== null) {
+        if (iconsContainer.actor !== null) {
+            iconsContainer.actor.destroy();
+            iconsContainer.actor = null;
+        }
+        iconsContainer = null;
+    }
 }
 
 // These functions read settings and apply user preferences per icon
@@ -202,24 +237,19 @@ function applyBrightnessContrast(icon) {
 
 function applyOpacity(icon) {
     let opacityValue = settings.get_int('icon-opacity');
-    icon.opacityEnterId = icon.connect('enter-event', function(actor, event) {
-        icon.opacity = 255;
-    });
-    icon.opacityLeaveId = icon.connect('leave-event', function(actor, event) {
-        icon.opacity = opacityValue;
-    });
+
+    // Apply mouse events to iconContainer,
+    // since click events are also received by it
+    icon.opacityEnterId = icon.get_parent().connect(
+        'enter-event', function(actor, event) { icon.opacity = 255; });
+    icon.opacityLeaveId = icon.get_parent().connect(
+        'leave-event', function(actor, event) { icon.opacity = opacityValue; });
     icon.opacity = opacityValue;
 }
 
 function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
     icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-}
-
-function applyPadding(iconContainer) {
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    let paddingValue = settings.get_int('icon-padding');
-    iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
 }
 
 // These functions are called by signals on preference change and loop through icons to apply it
@@ -256,7 +286,7 @@ function refreshSize() {
 
 function refreshTray() {
     moveToTray();
-    moveToTop()
+    moveToTop();
 }
 
 function refreshPos() {

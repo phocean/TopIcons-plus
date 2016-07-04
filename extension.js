@@ -32,6 +32,7 @@ const Convenience = Me.imports.convenience;
 
 let settings = null;
 let tray = null;
+let trayIconImplementations = null;
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
@@ -181,8 +182,14 @@ function moveToTop() {
 
 function moveToTray() {
     // Replace signal handlers
-    tray._trayManager.disconnect(trayAddedId);
-    tray._trayManager.disconnect(trayRemovedId);
+    if (trayAddedId !== 0) {
+        tray._trayManager.disconnect(trayAddedId);
+        trayAddedId = 0;
+    }
+    if (trayRemovedId !== 0) {
+        tray._trayManager.disconnect(trayRemovedId);
+        trayRemovedId = 0;
+    }
     tray._trayIconAddedId = tray._trayManager.connect(
         'tray-icon-added', Lang.bind(tray, tray._onTrayIconAdded));
     tray._trayIconRemovedId = tray._trayManager.connect(

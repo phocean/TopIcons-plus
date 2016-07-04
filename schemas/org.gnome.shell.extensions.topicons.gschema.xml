@@ -21,10 +21,10 @@
       <summary>Icon size</summary>
       <description>Icon size in pixel</description>
     </key>
-    <key name="icon-padding" type="i">
-      <default>10</default>
-      <summary>Icon padding</summary>
-      <description>Icon padding within the tray</description>
+    <key name="icon-spacing" type="i">
+      <default>16</default>
+      <summary>Icon spacing</summary>
+      <description>Icon spacing within the tray</description>
     </key>
     <key name="tray-pos" type="s">
       <default>"right"</default>

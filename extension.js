@@ -121,6 +121,8 @@ function onTrayIconAdded(o, icon, role, delay) {
             }));
         }
     }
+
+    iconsContainer.actor.visible = true;
 }
 
 
@@ -130,6 +132,9 @@ function onTrayIconRemoved(o, icon) {
     icon.destroy();
 
     icons.splice(icons.indexOf(icon), 1);
+
+    if (icons.length == 0)
+        iconsContainer.actor.visible = false;
 }
 
 function widgetNumber() {
@@ -143,7 +148,9 @@ function moveToTop() {
     let boxLayoutPadding = settings.get_int('icon-padding');
     iconsBoxLayout.set_style('spacing: ' + boxLayoutPadding + 'px;');
 
-    iconsContainer = new PanelMenu.ButtonBox();
+    // An empty ButtonBox will still display padding,
+    // therefore create it without visibility.
+    iconsContainer = new PanelMenu.ButtonBox({visible: false});
     let iconsContainerActor = iconsContainer.actor;
     iconsContainerActor.add_actor(iconsBoxLayout);
     let parent = iconsContainerActor.get_parent();
@@ -286,7 +293,7 @@ function refreshSize() {
 
 function refreshTray() {
     moveToTray();
-    moveToTop()
+    moveToTop();
 }
 
 function refreshPos() {

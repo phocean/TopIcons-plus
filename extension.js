@@ -25,35 +25,32 @@ const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Clutter = imports.gi.Clutter;
-
+const PanelMenu = imports.ui.panelMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-const PanelMenu = imports.ui.panelMenu;
-
 let settings = null;
-
 let tray = null;
-let trayIconImplementations = [];
 let trayAddedId = 0;
 let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
 let iconsContainer = null;
 
-function init() {
-    settings = Convenience.getSettings();
-}
+function init() { }
 
 function enable() {
     GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
     trayIconImplementations = imports.ui.legacyTray.STANDARD_TRAY_ICON_IMPLEMENTATIONS;
+    settings = Convenience.getSettings();
     settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
+    settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
+    settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
-    settings.connect('changed::icon-padding', Lang.bind(this, refreshTray));
+    settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
     settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
 }
@@ -75,17 +72,15 @@ function onTrayIconAdded(o, icon, role, delay) {
     icons.push(icon);
 
     // Icon properties
+    
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
-
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    //icon.set_pivot_point(0.5, 0.5);
-    //icon.set_scale(scaleFactor, scaleFactor);
     icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
+    // Container
     let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
-    //applyPadding(iconContainer);
 
     icon.connect("destroy", function() {
         icon.clear_effects();
@@ -94,13 +89,11 @@ function onTrayIconAdded(o, icon, role, delay) {
     iconContainer.connect('button-release-event', function(actor, event) {
         icon.click(event);
     });
-    
-    // Apply user settings
-    applyPreferences(icon, scaleFactor);
-    
+    applyPreferences(icon, scaleFactor); // user settings
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
     // Display icons (with a blacklist filter for specific extension like Skype integration)
+    
     let blacklist = [];
     // blacklist: array of uuid and wmClass (icon application name)
     blacklist.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
@@ -130,10 +123,9 @@ function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
     parent.destroy();
     icon.destroy();
-
     icons.splice(icons.indexOf(icon), 1);
 
-    if (icons.length == 0)
+    if (icons.length === 0)
         iconsContainer.actor.visible = false;
 }
 
@@ -142,11 +134,17 @@ function widgetNumber() {
 }
 
 function moveToTop() {
+    // Replace signal handlers
+    tray._trayManager.disconnect(tray._trayIconAddedId);
+    tray._trayManager.disconnect(tray._trayIconRemovedId);
+    trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAddedDelayed);
+    trayRemovedId = tray._trayManager.connect('tray-icon-removed', onTrayIconRemoved);
+
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
 
-    let boxLayoutPadding = settings.get_int('icon-padding');
-    iconsBoxLayout.set_style('spacing: ' + boxLayoutPadding + 'px;');
+    let boxLayoutSpacing = settings.get_int('icon-spacing');
+    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px;');
 
     // An empty ButtonBox will still display padding,
     // therefore create it without visibility.
@@ -157,6 +155,7 @@ function moveToTop() {
     if (parent)
         parent.remove_actor(iconsContainerActor);
 
+    // Position
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
     if (trayPosition == 'left') {
@@ -168,15 +167,7 @@ function moveToTop() {
         Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
     }
 
-    // Replace signal handlers;
-    tray._trayManager.disconnect(tray._trayIconAddedId);
-    tray._trayManager.disconnect(tray._trayIconRemovedId);
-    trayAddedId = tray._trayManager.connect(
-        'tray-icon-added', onTrayIconAddedDelayed);
-    trayRemovedId = tray._trayManager.connect(
-        'tray-icon-removed', onTrayIconRemoved);
-   
-    // Move each tray icon to the top;
+    // Move each tray icon to the top
     let length = tray._iconBox.get_n_children();
     for (let i = 0; i < length; i++) {
         let button = tray._iconBox.get_child_at_index(0);
@@ -189,15 +180,9 @@ function moveToTop() {
 }
 
 function moveToTray() {
-    // Restore signal handlers
-    if (trayAddedId != 0) {
-        tray._trayManager.disconnect(trayAddedId);
-        trayAddedId = 0;
-    }
-    if (trayRemovedId != 0) {
-        tray._trayManager.disconnect(trayRemovedId);
-        trayRemovedId = 0;
-    }
+    // Replace signal handlers
+    tray._trayManager.disconnect(trayAddedId);
+    tray._trayManager.disconnect(trayRemovedId);
     tray._trayIconAddedId = tray._trayManager.connect(
         'tray-icon-added', Lang.bind(tray, tray._onTrayIconAdded));
     tray._trayIconRemovedId = tray._trayManager.connect(
@@ -208,23 +193,24 @@ function moveToTray() {
         let icon = icons[i];
         icon.opacity = 255;
         icon.clear_effects();
-
         let parent = icon.get_parent();
         parent.remove_actor(icon);
         parent.destroy();
-
         tray._onTrayIconAdded(tray, icon);
     }
-        
+
+    // Clean containers
     icons = [];
-    if (iconsBoxLayout != null) {
+    if (iconsBoxLayout !== null) {
         iconsBoxLayout.destroy();
         iconsBoxLayout = null;
     }
-    if (iconsContainer != null) {
-        if (iconsContainer.actor != null) {
+    if (iconsContainer !== null) {
+        if (iconsContainer.actor !== null) {
             iconsContainer.actor.destroy();
+            iconsContainer.actor = null;
         }
+        iconsContainer.destroy();
         iconsContainer = null;
     }
 }
@@ -233,6 +219,7 @@ function moveToTray() {
 
 function applyPreferences(icon, scaleFactor) {
     applyOpacity(icon);
+    applyBrightnessContrast(icon);
     applySaturation(icon);
     applySize(icon, scaleFactor);
 }
@@ -242,6 +229,15 @@ function applySaturation(icon) {
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
     icon.add_effect(effect);
     effect.set_factor(desaturationValue);
+}
+
+function applyBrightnessContrast(icon) {
+    let brightnessValue = settings.get_double('icon-brightness');
+    let contrastValue =  settings.get_double('icon-contrast');
+    let effect = new Clutter.BrightnessContrastEffect({});
+    effect.set_brightness(brightnessValue);
+    effect.set_contrast(contrastValue);
+    icon.add_effect(effect);
 }
 
 function applyOpacity(icon) {
@@ -261,12 +257,6 @@ function applySize(icon, scaleFactor) {
     icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
 }
 
-function applyPadding(iconContainer) {
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    let paddingValue = settings.get_int('icon-padding');
-    iconContainer.set_style('padding: 0px ' + paddingValue + 'px;');
-}
-
 // These functions are called by signals on preference change and loop through icons to apply it
 
 function refreshOpacity() {
@@ -280,6 +270,14 @@ function refreshSaturation() {
     for (let i = 0; i < icons.length; i++) {
         let icon = icons[i];
         applySaturation(icon);
+    }
+    refreshTray();
+}
+
+function refreshBrightnessContrast() {
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        applyBrightnessContrast(icon);
     }
     refreshTray();
 }

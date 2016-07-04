@@ -4,6 +4,14 @@
       <default>0.375</default>
       <summary>Saturation</summary>
     </key>
+    <key name="icon-brightness" type="d">
+      <default>0.0</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="icon-contrast" type="d">
+      <default>0.0</default>
+      <summary>Contrast</summary>
+    </key>
     <key name="icon-opacity" type="i">
       <default>220</default>
       <summary>Opacity</summary>

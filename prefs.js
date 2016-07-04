@@ -11,7 +11,7 @@ const Mainloop = imports.mainloop;
 
 const Gettext = imports.gettext.domain('TopIcons-Plus');
 const _ = Gettext.gettext;
-const N_ = function(e) { return e; };
+const N_ = function(e) { return e; }
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();

@@ -111,14 +111,12 @@ function onTrayIconAdded(o, icon, role, delay) {
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
             {
                 iconContainer.visible = true;
+                iconsContainer.actor.visible = true;
                 return GLib.SOURCE_REMOVE;
             }));
         }
     }
-
-    iconsContainer.actor.visible = true;
 }
-
 
 function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
@@ -143,7 +141,6 @@ function moveToTop() {
 
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
-
     let boxLayoutSpacing = settings.get_int('icon-spacing');
     iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px;');
 
@@ -217,7 +214,6 @@ function moveToTray() {
             iconsContainer.actor.destroy();
             iconsContainer.actor = null;
         }
-        iconsContainer.destroy();
         iconsContainer = null;
     }
 }

@@ -78,10 +78,15 @@ function onTrayIconAdded(o, icon, role, delay) {
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
+    icon.set_size(icon.size.width * scaleFactor, icon.size.height * scaleFactor);
 
     // Container
-    let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
+    let iconContainer = new St.Button({
+            child: icon,
+            visible: false,
+            width: icon.size.width * scaleFactor,
+            height: icon.size.height * scaleFactor
+    });
 
     icon.connect("destroy", function() {
         icon.clear_effects();

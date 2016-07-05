@@ -50,7 +50,7 @@ function enable() {
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
     settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
-    settings.connect('changed::icon-size', Lang.bind(this, refreshSize));
+    settings.connect('changed::icon-size', Lang.bind(this, refreshTray));
     settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
     settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
@@ -68,10 +68,9 @@ function onTrayIconAdded(o, icon, role, delay=500) {
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-    icon.set_size(icon.size * scaleFactor, icon.size * scaleFactor);
 
     // Container
-    let iconContainer = new St.Button({child: icon, visible: false, width: icon.size*scaleFactor, height: icon.size*scaleFactor});
+    let iconContainer = new St.Button({child: icon, visible: false});
 
     icon.connect("destroy", function() {
         icon.clear_effects();
@@ -250,6 +249,7 @@ function applyOpacity(icon) {
 function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
     icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
 }
 
 // These functions are called by signals on preference change and loop through icons to apply it
@@ -275,13 +275,6 @@ function refreshBrightnessContrast() {
         applyBrightnessContrast(icon);
     }
     refreshTray();
-}
-
-function refreshSize() {
-    let iconSize = settings.get_int('icon-size');
-    for (let i=0; i<icons.length; i++) {
-        applySize(icons[i]);
-    }
 }
 
 function refreshTray() {

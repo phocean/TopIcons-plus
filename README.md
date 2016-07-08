@@ -79,7 +79,7 @@ You can configure appearance settings (opacity, saturation and icon size):
 
 GNOME Shell 3.16 and up.
 
-Known issues:
+## Known issues
 
 ### Dropbox
 

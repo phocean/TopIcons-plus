@@ -44,7 +44,6 @@ function init() { }
 function enable() {
     GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
-    trayIconImplementations = imports.ui.legacyTray.STANDARD_TRAY_ICON_IMPLEMENTATIONS;
     settings = Convenience.getSettings();
     settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
@@ -80,6 +79,7 @@ function onTrayIconAdded(o, icon, role, delay=500) {
         icon.click(event);
     });
     applyPreferences(icon, scaleFactor); // user settings
+
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
     // Display icons (with a blacklist filter for specific extension like Skype integration)

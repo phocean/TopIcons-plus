@@ -79,9 +79,56 @@ You can configure appearance settings (opacity, saturation and icon size):
 
 GNOME Shell 3.16 and up.
 
+Known issues:
+
+### Dropbox
+
+The Dropbox notification icon sometimes trashes the tray (also buggy with the Gnome legacy tray).
+
+You can restore the tray by reloading Gnome-shell (ALT-F2, r).
+
+On a longer term, you can solve this problem using:
+
+- *systemd* to launch Dropbox (instead of as a Gnome startup application),
+- rely on the *Dropbox nautilus extension* to get a visual feedback on the synchronization status.
+
+Here is my systemd script:
+
+```
+%cat /etc/systemd/system/dropbox.service 
+[Unit]
+Description=Dropbox Service
+After=network.target
+
+[Service]
+ExecStart=/bin/sh -c '/usr/bin/dropbox start'
+ExecStop=/bin/sh -c '/usr/bin/dropbox stop'
+PIDFile=${HOME}/.dropbox/dropbox.pid
+User=phocean
+Group=phocean
+Type=forking
+Restart=on-failure
+RestartSec=5
+StartLimitInterval=60s
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Which you can enable with these commands:
+
+```
+% systemctl enable dropbox
+% systemctl start dropbox
+```
+
+
 ## Credits
 
 Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
+
+Also, thanks to all contributors (code and issues), and especially to [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up!
 
 ## Notes
 

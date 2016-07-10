@@ -62,6 +62,8 @@ function disable() {
 
 function onTrayIconAdded(o, icon, role, delay=500) {
 
+    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
+
     // Icon properties
     icon.reactive = true;
     let trayPosition = settings.get_string('tray-pos');
@@ -125,8 +127,10 @@ function widgetNumber() {
 
 function moveToTop() {
     // Replace signal handlers
-    tray._trayManager.disconnect(tray._trayIconAddedId);
-    tray._trayManager.disconnect(tray._trayIconRemovedId);
+    if (tray._trayIconAddedId)
+        tray._trayManager.disconnect(tray._trayIconAddedId);
+    if (tray._trayIconRemovedId)
+        tray._trayManager.disconnect(tray._trayIconRemovedId);
     trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAdded);
     trayRemovedId = tray._trayManager.connect('tray-icon-removed', onTrayIconRemoved);
 
@@ -170,11 +174,11 @@ function moveToTop() {
 
 function moveToTray() {
     // Replace signal handlers
-    if (trayAddedId !== 0) {
+    if (trayAddedId) {
         tray._trayManager.disconnect(trayAddedId);
         trayAddedId = 0;
     }
-    if (trayRemovedId !== 0) {
+    if (trayRemovedId) {
         tray._trayManager.disconnect(trayRemovedId);
         trayRemovedId = 0;
     }
@@ -196,12 +200,12 @@ function moveToTray() {
 
     // Clean containers
     icons = [];
-    if (iconsBoxLayout !== null) {
+    if (iconsBoxLayout) {
         iconsBoxLayout.destroy();
         iconsBoxLayout = null;
     }
-    if (iconsContainer !== null) {
-        if (iconsContainer.actor !== null) {
+    if (iconsContainer) {
+        if (iconsContainer.actor) {
             iconsContainer.actor.destroy();
             iconsContainer.actor = null;
         }

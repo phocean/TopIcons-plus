@@ -92,35 +92,32 @@ On a longer term, you can solve this problem using:
 - *systemd* to launch Dropbox (instead of as a Gnome startup application),
 - rely on the *Dropbox nautilus extension* to get a visual feedback on the synchronization status.
 
-Here is my systemd script:
+Here is the systemd script to run it in the user context (thanks @robolange for the tip):
 
 ```
-%cat /etc/systemd/system/dropbox.service 
+$ cat ~/.config/systemd/user/dropbox.service
 [Unit]
 Description=Dropbox Service
-After=network.target
 
 [Service]
-ExecStart=/bin/sh -c '/usr/bin/dropbox start'
-ExecStop=/bin/sh -c '/usr/bin/dropbox stop'
-PIDFile=${HOME}/.dropbox/dropbox.pid
-User=phocean
-Group=phocean
 Type=forking
+ExecStart=/usr/bin/dropbox start
+ExecStop=/usr/bin/dropbox stop
+PIDFile=${HOME}/.dropbox/dropbox.pid
 Restart=on-failure
 RestartSec=5
 StartLimitInterval=60s
 StartLimitBurst=3
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 ```
 
 Which you can enable with these commands:
 
 ```
-% systemctl enable dropbox
-% systemctl start dropbox
+$ systemctl --user enable dropbox
+$ systemctl --user start dropbox
 ```
 
 

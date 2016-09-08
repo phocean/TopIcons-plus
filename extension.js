@@ -252,8 +252,8 @@ function applyOpacity(icon) {
 
 function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
-    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    icon.get_parent().set_size(iconSize * scaleFactor - 4, iconSize * scaleFactor - 4);
+    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor;
 }
 
 // These functions are called by signals on preference change and loop through icons to apply it

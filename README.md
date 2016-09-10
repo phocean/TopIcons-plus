@@ -2,28 +2,28 @@
 
 ## Introduction
 
-![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/screenshot.png)
-
 Topicons Plus is an alternative to the Gnome Shell Legacy Tray, which is hidden most of the time and generally considered inconvenient.
 
 It brings all icons to back to the top panel, as with most desktop environments.
 
+With colors:
+
+![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray1.png)
+
+Grayscale alternative (desaturation setting):
+
+![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray2.png)
+
 There were an original TopIcons extension for that, but it stopped being maintained and it had a few issues and little configuration options.
 Thus, this fork.
 
-Before (standard Gnome legacy tray):
+Before (standard Gnome legacy tray, bottom left):
 
 ![Before](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/before.png)
 
-After (slight opacity tweaking):
+After:
 
-![After (1)](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after_1.png)
-
-
-After (saturation tweaking):
-
-![After (2)](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after_2.png)
-
+![After](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after.png)
 
 Enjoy it!
 

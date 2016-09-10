@@ -137,7 +137,7 @@ function moveToTop() {
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
     let boxLayoutSpacing = settings.get_int('icon-spacing');
-    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px;');
+    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px; margin_top: 2px; margin_bottom: 2px;');
 
     // An empty ButtonBox will still display padding,
     // therefore create it without visibility.
@@ -252,8 +252,8 @@ function applyOpacity(icon) {
 
 function applySize(icon, scaleFactor) {
     let iconSize = settings.get_int('icon-size');
-    icon.get_parent().set_size(iconSize * scaleFactor - 4, iconSize * scaleFactor - 4);
-    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor;
+    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
 }
 
 // These functions are called by signals on preference change and loop through icons to apply it

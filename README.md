@@ -79,6 +79,14 @@ You can configure appearance settings (opacity, saturation and icon size):
 
 GNOME Shell 3.16 and up.
 
+## Changelog
+
+v16:
+
+* Updated Gnome version support
+* Documentation updates
+* Minor changes to the icon box layout (margin)
+
 ## Known issues
 
 ### Dropbox

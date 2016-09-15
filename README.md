@@ -83,12 +83,12 @@ This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> w
 
 Now, reload GNOME Shell with <code>Alt+F2</code> and then <code>r</code> or login/logout.
 
-![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
+![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload.png)
 
 Finally, launch the *gnome-tweak-tool* utility to manage extensions.
 There, you can enable *TopIcons Plus* and then tweak its appearance settings:
 
-![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/gnome-tweak.png)
+![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tweak.png)
 
 ## Compatibility
 

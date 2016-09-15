@@ -117,7 +117,7 @@ On a longer term, you can solve this problem using:
 
 Here is the systemd script to run it in the user context (thanks @robolange for the tip):
 
-```
+```bash
 $ cat ~/.config/systemd/user/dropbox.service
 [Unit]
 Description=Dropbox Service
@@ -138,9 +138,9 @@ WantedBy=default.target
 
 Which you can enable with these commands:
 
-```
-$ systemctl --user enable dropbox
-$ systemctl --user start dropbox
+```bash
+systemctl --user enable dropbox
+systemctl --user start dropbox
 ```
 
 

@@ -39,7 +39,7 @@ apt-get install make
 dnf install make
 ```
 
-Download the code to any folder, e.g. <code>/home/$USER/Downloads</code>, using this command :
+Download the code to any folder, e.g. <code>/home/$USER/Downloads</code>, using these commands :
 
 ```bash
 cd /home/$USER/Downloads
@@ -55,25 +55,40 @@ make
 
 The whole process should look similar to this:
 
-![Install](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/install.png)
+```bash
+% make
+glib-compile-schemas schemas
+rm -rf _build
+mkdir _build
+cp -r schemas convenience.js extension.js metadata.json prefs.js README.md _build
+echo Build was successfull 
+Build was successfull
+rm -rf ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
+mkdir -p ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
+cp -r _build/* ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
+rm -rf _build
+echo Installed in ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
+Installed in /home/phocean/.local/share/gnome-shell/extensions/TopIcons@phocean.net
+% 
+```
+
+To avoid any Gnome update issue ([see the official statement](https://git.gnome.org/browse/gnome-shell/commit/?id=5e0e3ed)), make sure that version check is disabled:
+
+```bash
+gsettings set org.gnome.shell disable-extension-version-validation "true"
+```
+
 
 This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
 
-Now, reload GNOME Shell with <code>Alt+F2 r Enter</code>:
+Now, reload GNOME Shell with <code>Alt+F2</code> and then <code>r</code> or login/logout.
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload-gnome.png)
 
-Finally, launch the *gnome-tweak-tool* utility to manage extensions:
+Finally, launch the *gnome-tweak-tool* utility to manage extensions.
+There, you can enable *TopIcons Plus* and then tweak its appearance settings:
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/gnome-tweak.png)
-
-Enable it:
-
-![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-enable.png)
-
-You can configure appearance settings (opacity, saturation and icon size):
-
-![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/topicons-config.png)
 
 ## Compatibility
 

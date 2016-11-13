@@ -113,7 +113,8 @@ function onTrayIconAdded(o, icon, role, delay=500) {
 
 function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
-    parent.destroy();
+    if (parent)
+        parent.destroy();
     icon.destroy();
     icons.splice(icons.indexOf(icon), 1);
 

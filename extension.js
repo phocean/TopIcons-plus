@@ -60,7 +60,7 @@ function disable() {
     settings.run_dispose();
 }
 
-function onTrayIconAdded(o, icon, role, delay=500) {
+function onTrayIconAdded(o, icon, role, delay=1000) {
 
     let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
 

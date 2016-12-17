@@ -49,8 +49,8 @@ function enable() {
     settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
     settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
     settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
-    settings.connect('changed::icon-size', Lang.bind(this, refreshTray));
-    settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
+    //settings.connect('changed::icon-size', Lang.bind(this, refreshTray));
+    //settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
     settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
     settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
 }
@@ -208,7 +208,7 @@ function moveToTray() {
     if (iconsContainer) {
         if (iconsContainer.actor) {
             iconsContainer.actor.destroy();
-            iconsContainer.actor = null;
+            //iconsContainer.actor = null;
         }
         iconsContainer = null;
     }
@@ -226,8 +226,8 @@ function applyPreferences(icon, scaleFactor) {
 function applySaturation(icon) {
     let desaturationValue =  settings.get_double('icon-saturation');
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
-    icon.add_effect(effect);
     effect.set_factor(desaturationValue);
+    icon.add_effect(effect);
 }
 
 function applyBrightnessContrast(icon) {
@@ -241,13 +241,6 @@ function applyBrightnessContrast(icon) {
 
 function applyOpacity(icon) {
     let opacityValue = settings.get_int('icon-opacity');
-
-    // Apply mouse events to iconContainer,
-    // since click events are also received by it
-    icon.opacityEnterId = icon.get_parent().connect(
-        'enter-event', function(actor, event) { icon.opacity = 255; });
-    icon.opacityLeaveId = icon.get_parent().connect(
-        'leave-event', function(actor, event) { icon.opacity = opacityValue; });
     icon.opacity = opacityValue;
 }
 
@@ -271,7 +264,6 @@ function refreshSaturation() {
         let icon = icons[i];
         applySaturation(icon);
     }
-    refreshTray();
 }
 
 function refreshBrightnessContrast() {
@@ -279,12 +271,6 @@ function refreshBrightnessContrast() {
         let icon = icons[i];
         applyBrightnessContrast(icon);
     }
-    refreshTray();
-}
-
-function refreshTray() {
-    moveToTray();
-    moveToTop();
 }
 
 function refreshPos() {
@@ -304,5 +290,4 @@ function refreshPos() {
             settings.set_int('tray-order',value);
         }
     }
-    refreshTray();
 }

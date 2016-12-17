@@ -194,8 +194,10 @@ function moveToTray() {
         icon.opacity = 255;
         icon.clear_effects();
         let parent = icon.get_parent();
-        parent.remove_actor(icon);
-        parent.destroy();
+        if (parent) {
+            parent.remove_actor(icon);
+            parent.destroy();
+        }
         tray._onTrayIconAdded(tray, icon);
     }
 
@@ -226,17 +228,21 @@ function applyPreferences(icon, scaleFactor) {
 function applySaturation(icon) {
     let desaturationValue =  settings.get_double('icon-saturation');
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
+    if (icon.get_effect('desaturate'))
+        icon.remove_effect_by_name('desaturate');
     effect.set_factor(desaturationValue);
-    icon.add_effect(effect);
+    icon.add_effect_with_name('desaturate', effect);
 }
 
 function applyBrightnessContrast(icon) {
     let brightnessValue = settings.get_double('icon-brightness');
     let contrastValue =  settings.get_double('icon-contrast');
     let effect = new Clutter.BrightnessContrastEffect({});
+    if (icon.get_effect('brightness-contrast'))
+        icon.remove_effect_by_name('brightness-contrast');
     effect.set_brightness(brightnessValue);
     effect.set_contrast(contrastValue);
-    icon.add_effect(effect);
+    icon.add_effect_with_name('brightness-contrast',effect);
 }
 
 function applyOpacity(icon) {

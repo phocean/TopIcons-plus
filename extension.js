@@ -45,14 +45,14 @@ function enable() {
     GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
     settings = Convenience.getSettings();
-    settings.connect('changed::icon-opacity', Lang.bind(this, refreshOpacity));
-    settings.connect('changed::icon-saturation', Lang.bind(this, refreshSaturation));
-    settings.connect('changed::icon-brightness', Lang.bind(this, refreshBrightnessContrast));
-    settings.connect('changed::icon-contrast', Lang.bind(this, refreshBrightnessContrast));
-    //settings.connect('changed::icon-size', Lang.bind(this, refreshTray));
-    //settings.connect('changed::icon-spacing', Lang.bind(this, refreshTray));
-    settings.connect('changed::tray-pos', Lang.bind(this, refreshPos));
-    settings.connect('changed::tray-order', Lang.bind(this, refreshPos));
+    settings.connect('changed::icon-opacity', Lang.bind(this, setOpacity));
+    settings.connect('changed::icon-saturation', Lang.bind(this, setSaturation));
+    settings.connect('changed::icon-brightness', Lang.bind(this, setBrightnessContrast));
+    settings.connect('changed::icon-contrast', Lang.bind(this, setBrightnessContrast));
+    settings.connect('changed::icon-size', Lang.bind(this, setSize));
+    settings.connect('changed::icon-spacing', Lang.bind(this, setSpacing));
+    settings.connect('changed::tray-pos', Lang.bind(this, placeTray));
+    settings.connect('changed::tray-order', Lang.bind(this, placeTray));
 }
 
 function disable() {
@@ -64,12 +64,6 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
 
     let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
 
-    // Icon properties
-    icon.reactive = true;
-    let trayPosition = settings.get_string('tray-pos');
-    let trayOrder = settings.get_int('tray-order');
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-
     // Container
     let iconContainer = new St.Button({child: icon, visible: false});
 
@@ -77,10 +71,12 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
         icon.clear_effects();
         iconContainer.destroy();
     });
+
     iconContainer.connect('button-release-event', function(actor, event) {
         icon.click(event);
     });
-    applyPreferences(icon, scaleFactor); // user settings
+
+    setIcon(icon);
 
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
@@ -112,6 +108,7 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
 }
 
 function onTrayIconRemoved(o, icon) {
+
     let parent = icon.get_parent();
     if (parent)
         parent.destroy();
@@ -120,13 +117,11 @@ function onTrayIconRemoved(o, icon) {
 
     if (icons.length === 0)
         iconsContainer.actor.visible = false;
-}
-
-function widgetNumber() {
-    return Main.panel._leftBox.get_n_children();
+    
 }
 
 function moveToTop() {
+
     // Replace signal handlers
     if (tray._trayIconAddedId)
         tray._trayManager.disconnect(tray._trayIconAddedId);
@@ -137,29 +132,13 @@ function moveToTop() {
 
     // Create box layout for icon containers 
     iconsBoxLayout = new St.BoxLayout();
-    let boxLayoutSpacing = settings.get_int('icon-spacing');
-    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px; margin_top: 2px; margin_bottom: 2px;');
+    setSpacing();
 
-    // An empty ButtonBox will still display padding,
-    // therefore create it without visibility.
+    // An empty ButtonBox will still display padding,therefore create it without visibility.
     iconsContainer = new PanelMenu.ButtonBox({visible: false});
-    let iconsContainerActor = iconsContainer.actor;
-    iconsContainerActor.add_actor(iconsBoxLayout);
-    let parent = iconsContainerActor.get_parent();
-    if (parent)
-        parent.remove_actor(iconsContainerActor);
+    // let iconsContainerActor = iconsContainer.actor;
 
-    // Position
-    let trayPosition = settings.get_string('tray-pos');
-    let trayOrder = settings.get_int('tray-order');
-    if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
-        Main.panel._leftBox.insert_child_at_index(iconsContainerActor, index);
-    }
-    else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
-        Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
-    }
+    placeTray();
 
     // Move each tray icon to the top
     let length = tray._iconBox.get_n_children();
@@ -171,18 +150,22 @@ function moveToTop() {
         // Icon already loaded, no need to delay insertion
         onTrayIconAdded(this, icon, '', 0);
     }
+
 }
 
 function moveToTray() {
+
     // Replace signal handlers
     if (trayAddedId) {
         tray._trayManager.disconnect(trayAddedId);
         trayAddedId = 0;
     }
+
     if (trayRemovedId) {
         tray._trayManager.disconnect(trayRemovedId);
         trayRemovedId = 0;
     }
+
     tray._trayIconAddedId = tray._trayManager.connect(
         'tray-icon-added', Lang.bind(tray, tray._onTrayIconAdded));
     tray._trayIconRemovedId = tray._trayManager.connect(
@@ -214,86 +197,121 @@ function moveToTray() {
         }
         iconsContainer = null;
     }
+
 }
 
-// These functions read settings and apply user preferences per icon
+function placeTray() {
 
-function applyPreferences(icon, scaleFactor) {
-    applyOpacity(icon);
-    applyBrightnessContrast(icon);
-    applySaturation(icon);
-    applySize(icon, scaleFactor);
+    let iconsContainerActor = iconsContainer.actor;
+    iconsContainerActor.add_actor(iconsBoxLayout);
+    let parent = iconsContainerActor.get_parent();
+    if (parent)
+        parent.remove_actor(iconsContainerActor);
+
+    // Position
+    let trayPosition = settings.get_string('tray-pos');
+    let trayOrder = settings.get_int('tray-order');
+    if (trayPosition == 'left') {
+        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
+        Main.panel._leftBox.insert_child_at_index(iconsContainerActor, index);
+    }
+    else {
+        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
+        Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
+    }
+
 }
 
-function applySaturation(icon) {
+
+function setIcon(icon) {
+
+    let opacityValue = settings.get_int('icon-opacity');
     let desaturationValue =  settings.get_double('icon-saturation');
-    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
-    if (icon.get_effect('desaturate'))
-        icon.remove_effect_by_name('desaturate');
-    effect.set_factor(desaturationValue);
-    icon.add_effect_with_name('desaturate', effect);
-}
-
-function applyBrightnessContrast(icon) {
     let brightnessValue = settings.get_double('icon-brightness');
     let contrastValue =  settings.get_double('icon-contrast');
+    let iconSize = settings.get_int('icon-size');
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+
+    icon.reactive = true;
+
+    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+
+    icon.opacity = opacityValue;
+
+    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
+    effect.set_factor(desaturationValue);
+    icon.add_effect_with_name('desaturate', effect);
+
     let effect = new Clutter.BrightnessContrastEffect({});
-    if (icon.get_effect('brightness-contrast'))
-        icon.remove_effect_by_name('brightness-contrast');
     effect.set_brightness(brightnessValue);
     effect.set_contrast(contrastValue);
     icon.add_effect_with_name('brightness-contrast',effect);
 }
 
-function applyOpacity(icon) {
+
+// Settings
+
+function setOpacity() {
+
     let opacityValue = settings.get_int('icon-opacity');
-    icon.opacity = opacityValue;
+
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        icon.opacity = opacityValue;
+    }
+
 }
 
-function applySize(icon, scaleFactor) {
+function setSaturation(icon) {
+
+    let desaturationValue =  settings.get_double('icon-saturation');
+    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
+    effect.set_factor(desaturationValue);
+
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        if (icon.get_effect('desaturate'))
+            icon.remove_effect_by_name('desaturate');
+        icon.add_effect_with_name('desaturate', effect);
+    }
+
+}
+
+function setBrightnessContrast(icon) {
+
+    let brightnessValue = settings.get_double('icon-brightness');
+    let contrastValue =  settings.get_double('icon-contrast');
+    let effect = new Clutter.BrightnessContrastEffect({});
+    effect.set_brightness(brightnessValue);
+    effect.set_contrast(contrastValue);
+
+    for (let i = 0; i < icons.length; i++) {
+        let icon = icons[i];
+        if (icon.get_effect('brightness-contrast'))
+            icon.remove_effect_by_name('brightness-contrast');
+        icon.add_effect_with_name('brightness-contrast',effect);
+    }
+
+}
+
+function setSize(icon) {
+
     let iconSize = settings.get_int('icon-size');
-    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-}
+    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-// These functions are called by signals on preference change and loop through icons to apply it
-
-function refreshOpacity() {
     for (let i = 0; i < icons.length; i++) {
         let icon = icons[i];
-        applyOpacity(icon);
+        icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+        icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
     }
+
 }
 
-function refreshSaturation() {
-    for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
-        applySaturation(icon);
-    }
-}
+function setSpacing() {
+    
+    let boxLayoutSpacing = settings.get_int('icon-spacing');
 
-function refreshBrightnessContrast() {
-    for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
-        applyBrightnessContrast(icon);
-    }
-}
+    iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px; margin_top: 2px; margin_bottom: 2px;');
 
-function refreshPos() {
-    let trayPosition = settings.get_string('tray-pos');
-    let value = settings.get_int('tray-order');
-
-    // Dirty hack but could not find how to access Main items from prefs.js to set a dynamic max value for the current tray
-    if (trayPosition == 'left') {
-        if (value >= Main.panel._leftBox.get_n_children()) {
-            value = 0;
-            settings.set_int('tray-order',value);
-        }
-    }
-    else {
-        if (value >= Main.panel._rightBox.get_n_children()) {
-            value = 0;
-            settings.set_int('tray-order',value);
-        }
-    }
 }

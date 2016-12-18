@@ -183,7 +183,7 @@ function moveToTray() {
     if (iconsContainer) {
         if (iconsContainer.actor) {
             iconsContainer.actor.destroy();
-            //iconsContainer.actor = null;
+            iconsContainer.actor = null;
         }
         iconsContainer = null;
     }
@@ -234,15 +234,11 @@ function setIcon(icon) {
 
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
     effect.set_factor(desaturationValue);
-    if (icon.get_effect('desaturate'))
-        icon.remove_effect_by_name('desaturate');
     icon.add_effect_with_name('desaturate', effect);
 
     let effect = new Clutter.BrightnessContrastEffect({});
     effect.set_brightness(brightnessValue);
     effect.set_contrast(contrastValue);
-    if (icon.get_effect('brightness-contrast'))
-        icon.remove_effect_by_name('brightness-contrast');
     icon.add_effect_with_name('brightness-contrast',effect);
 
 }
@@ -278,31 +274,24 @@ function setOpacity() {
 function setSaturation() {
 
     let desaturationValue =  settings.get_double('icon-saturation');
-    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
-    effect.set_factor(desaturationValue);
-
+    
     for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
-        if (icon.get_effect('desaturate'))
-            icon.remove_effect_by_name('desaturate');
-        icon.add_effect_with_name('desaturate', effect);
-    }
-
+         let icon = icons[i];
+         let effect = icon.get_effect('desaturate');
+         effect.set_factor(desaturationValue);
+     }
 }
 
 function setBrightnessContrast() {
 
     let brightnessValue = settings.get_double('icon-brightness');
     let contrastValue =  settings.get_double('icon-contrast');
-    let effect = new Clutter.BrightnessContrastEffect({});
-    effect.set_brightness(brightnessValue);
-    effect.set_contrast(contrastValue);
 
     for (let i = 0; i < icons.length; i++) {
         let icon = icons[i];
-        if (icon.get_effect('brightness-contrast'))
-            icon.remove_effect_by_name('brightness-contrast');
-        icon.add_effect_with_name('brightness-contrast',effect);
+        let effect = icon.get_effect('brightness-contrast')
+        effect.set_brightness(brightnessValue);
+        effect.set_contrast(contrastValue);
     }
 
 }

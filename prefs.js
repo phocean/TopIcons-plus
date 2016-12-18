@@ -129,7 +129,7 @@ const Settings = new Lang.Class({
         // Tray position in panel
         let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
         let label = new Gtk.Label({label: _("Tray side"), xalign: 0});
-        let positions = {'left': N_("left"), 'right': N_("right"),}
+        let positions = {'left': N_("left"), 'center': N_("center"), 'right': N_("right")}
         let currentPos = this._settings.get_string('tray-pos');
         hbox.pack_start(label, true, true, 0);
         let radio = null;

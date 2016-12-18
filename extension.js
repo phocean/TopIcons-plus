@@ -38,10 +38,12 @@ let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
 let iconsContainer = null;
+let blacklist = ["skype","SkypeNotification@chrisss404.gmail.com"]; // blacklist: array of uuid and wmClass (icon application name)
 
 function init() { }
 
 function enable() {
+
     GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
     settings = Convenience.getSettings();
@@ -53,18 +55,18 @@ function enable() {
     settings.connect('changed::icon-spacing', Lang.bind(this, setSpacing));
     settings.connect('changed::tray-pos', Lang.bind(this, placeTray));
     settings.connect('changed::tray-order', Lang.bind(this, placeTray));
+
 }
 
 function disable() {
+
     moveToTray();
     settings.run_dispose();
+
 }
 
 function onTrayIconAdded(o, icon, role, delay=1000) {
 
-    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
-
-    // Container
     let iconContainer = new St.Button({child: icon, visible: false});
 
     icon.connect("destroy", function() {
@@ -76,42 +78,31 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
         icon.click(event);
     });
 
-    setIcon(icon);
-
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
-    // Display icons (with a blacklist filter for specific extension like Skype integration)
-    
-    let blacklist = [];
-    // blacklist: array of uuid and wmClass (icon application name)
-    blacklist.push(["skype","SkypeNotification@chrisss404.gmail.com"]);
-    // loop through the array and hide the extension if extension X is enabled and corresponding application is running
-    for (let i = 0; i < blacklist.length; i++) {
-        if (ExtensionUtils.extensions[blacklist[i][1]] !== undefined && ExtensionUtils.extensions[blacklist[i][1]].state == 1 && wmClass == blacklist[i][0]) {
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
-            {
-                iconContainer.visible = false;
-                return GLib.SOURCE_REMOVE;
-            }));
-        }
-        else {
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function()
-            {
-                iconContainer.visible = true;
-                iconsContainer.actor.visible = true;
-                return GLib.SOURCE_REMOVE;
-            }));
-        }
-    }
+    if (checkApp(icon))
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
+            iconContainer.visible = true;
+            iconsContainer.actor.visible = true;
+            return GLib.SOURCE_REMOVE;
+        }));
+    else
+         GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
+            iconContainer.visible = false;
+            return GLib.SOURCE_REMOVE;
+        }));
+
+    setIcon(icon);
 
     icons.push(icon);
+
 }
 
 function onTrayIconRemoved(o, icon) {
 
     let parent = icon.get_parent();
     if (parent)
-        parent.destroy();
+         parent.destroy();
     icon.destroy();
     icons.splice(icons.indexOf(icon), 1);
 
@@ -136,9 +127,8 @@ function moveToTop() {
 
     // An empty ButtonBox will still display padding,therefore create it without visibility.
     iconsContainer = new PanelMenu.ButtonBox({visible: false});
-    // let iconsContainerActor = iconsContainer.actor;
-
     placeTray();
+    iconsContainer.actor.add_actor(iconsBoxLayout)
 
     // Move each tray icon to the top
     let length = tray._iconBox.get_n_children();
@@ -202,22 +192,24 @@ function moveToTray() {
 
 function placeTray() {
 
-    let iconsContainerActor = iconsContainer.actor;
-    iconsContainerActor.add_actor(iconsBoxLayout);
-    let parent = iconsContainerActor.get_parent();
-    if (parent)
-        parent.remove_actor(iconsContainerActor);
-
-    // Position
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
+
+    let parent = iconsContainer.actor.get_parent();
+    if (parent)
+        parent.remove_actor(iconsContainer.actor);
+    
     if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder -1;
-        Main.panel._leftBox.insert_child_at_index(iconsContainerActor, index);
+        let index = Main.panel._leftBox.get_n_children() - trayOrder;
+        Main.panel._leftBox.insert_child_at_index(iconsContainer.actor, index);
+    }
+    else if (trayPosition == 'center') {
+        let index = Main.panel._centerBox.get_n_children() - trayOrder;
+        Main.panel._centerBox.insert_child_at_index(iconsContainer.actor, index);
     }
     else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder -1;
-        Main.panel._rightBox.insert_child_at_index(iconsContainerActor, index);
+        let index = Main.panel._rightBox.get_n_children() - trayOrder;
+        Main.panel._rightBox.insert_child_at_index(iconsContainer.actor, index);
     }
 
 }
@@ -236,17 +228,37 @@ function setIcon(icon) {
 
     icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
     icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    setSpacing();
 
     icon.opacity = opacityValue;
 
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
     effect.set_factor(desaturationValue);
+    if (icon.get_effect('desaturate'))
+        icon.remove_effect_by_name('desaturate');
     icon.add_effect_with_name('desaturate', effect);
 
     let effect = new Clutter.BrightnessContrastEffect({});
     effect.set_brightness(brightnessValue);
     effect.set_contrast(contrastValue);
+    if (icon.get_effect('brightness-contrast'))
+        icon.remove_effect_by_name('brightness-contrast');
     icon.add_effect_with_name('brightness-contrast',effect);
+
+}
+
+function checkApp(icon) {
+
+    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
+
+    for (let i = 0; i < blacklist.length; i++) {
+        // loop through the array and hide the extension if extension X is enabled and corresponding application is running
+        if (ExtensionUtils.extensions[blacklist[i][1]] !== undefined && ExtensionUtils.extensions[blacklist[i][1]].state == 1 && wmClass == blacklist[i][0]) 
+            return false;
+        }
+
+    return true;
+
 }
 
 
@@ -263,7 +275,7 @@ function setOpacity() {
 
 }
 
-function setSaturation(icon) {
+function setSaturation() {
 
     let desaturationValue =  settings.get_double('icon-saturation');
     let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
@@ -278,7 +290,7 @@ function setSaturation(icon) {
 
 }
 
-function setBrightnessContrast(icon) {
+function setBrightnessContrast() {
 
     let brightnessValue = settings.get_double('icon-brightness');
     let contrastValue =  settings.get_double('icon-contrast');
@@ -295,7 +307,7 @@ function setBrightnessContrast(icon) {
 
 }
 
-function setSize(icon) {
+function setSize() {
 
     let iconSize = settings.get_int('icon-size');
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;

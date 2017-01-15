@@ -78,23 +78,35 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
         icon.click(event);
     });
 
-    iconsBoxLayout.insert_child_at_index(iconContainer, 0);
+    //iconsBoxLayout.insert_child_at_index(iconContainer, 0);
 
-    if (checkApp(icon))
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
+
+    // display icon
+    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
+    for (let i = 0; i < blacklist.length; i++) {
+        // loop through the array and hide the extension if extension X is enabled and corresponding application is running
+        if (ExtensionUtils.extensions[blacklist[i+1]] !== undefined && ExtensionUtils.extensions[blacklist[i+1]].state === 1 && wmClass === blacklist[i]) {
+        //if (wmClass === "Skype") {
+            return;
+            // GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
+            // iconContainer.visible = false;
+            // iconsContainer.actor.visible = false;
+            // return GLib.SOURCE_REMOVE;
+            // }));            
+        }
+        else {
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
             iconContainer.visible = true;
             iconsContainer.actor.visible = true;
             return GLib.SOURCE_REMOVE;
-        }));
-    else
-         GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
-            iconContainer.visible = false;
-            return GLib.SOURCE_REMOVE;
-        }));
+            }));
+            iconsBoxLayout.insert_child_at_index(iconContainer, 0);
+            setIcon(icon);
+            icons.push(icon);
+        }
+    }
 
-    setIcon(icon);
 
-    icons.push(icon);
 
 }
 
@@ -243,20 +255,6 @@ function setIcon(icon) {
 
 }
 
-function checkApp(icon) {
-
-    let wmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
-
-    for (let i = 0; i < blacklist.length; i++) {
-        // loop through the array and hide the extension if extension X is enabled and corresponding application is running
-        if (ExtensionUtils.extensions[blacklist[i][1]] !== undefined && ExtensionUtils.extensions[blacklist[i][1]].state == 1 && wmClass == blacklist[i][0]) 
-            return false;
-        }
-
-    return true;
-
-}
-
 
 // Settings
 
@@ -310,7 +308,7 @@ function setSize() {
 }
 
 function setSpacing() {
-    
+
     let boxLayoutSpacing = settings.get_int('icon-spacing');
 
     iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px; margin_top: 2px; margin_bottom: 2px;');

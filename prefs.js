@@ -7,8 +7,6 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
-//const MainUI = imports.ui.main;
-
 const Gettext = imports.gettext.domain('TopIcons-Plus');
 const _ = Gettext.gettext;
 const N_ = function(e) { return e; }

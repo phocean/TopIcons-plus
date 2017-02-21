@@ -30,6 +30,24 @@ Enjoy it!
 
 ## Installation
 
+### Get it from the extensions website
+
+Point your web browser to the TopIcons Plus page on the [GNOME Shell Extensions website](https://extensions.gnome.org/extension/1031/topicons/). GNOME uses a browser addon, which should have come with your Linux distro, to provide a web interface to the extensions manager on your system. Currently, only Firefox is supported, but support for other browsers is in the works. The first time you visit this website, you should be prompted to enable this browser addon -- [see the FAQs](https://extensions.gnome.org/about/#no-detection) if you have any issues, then go back to the TopIcons Plus page.
+
+All you have to do next is click the switch from off to on.
+
+![Toggle Switch](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/toggle-switch.png)
+
+There will be a GNOME Shell pop-up asking you to confirm that you want to download and install this extension. After that, it may take a moment for the extension to set itself up, but *you* are done. Icons will move from the legacy tray to the top panel on their own.
+
+If you want to tweak the icons' look and feel, you can go to the web page for [Installed Extensions](https://extensions.gnome.org/local/). Click on the wrench-and-screwdriver button to open the TopIcons Plus settings, or click the red X button to uninstall.
+
+![Installed Extensions web page](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/installed-extension-web-page.png)
+
+If you install extensions from the GNOME website like this, be sure to revisit this page occasionally to check for updates.
+
+### Or compile it yourself
+
 Pre-Requisite: You need the *make* utility :
 
 ```bash
@@ -125,7 +143,3 @@ systemctl --user start dropbox
 Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
 
 Also, thanks to all contributors (code and issues), and especially to [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up!
-
-## Notes
-
-The extension is pending review on https://extensions.gnome.org, so hopefully it will be validated so that it is easier to install soon.

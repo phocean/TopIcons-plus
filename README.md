@@ -2,20 +2,15 @@
 
 ## Introduction
 
-Topicons Plus is an alternative to the Gnome Shell Legacy Tray, which is hidden most of the time and generally considered inconvenient.
+Many applications, such as chat clients, downloaders, and some media players, are meant to run long-term in the background even after you close their window. These applications remain accessible by adding an icon to the GNOME Shell Legacy Tray. However, the Legacy Tray is hidden until you push your mouse into the lower-left of the screen and click on the small tab that appears. TopIcons Plus brings all icons back to the top panel so that it's easier to notice when a new application opens in the background or if one continues to idle after you thought you closed it.
 
-It brings all icons to back to the top panel, as with most desktop environments.
-
-With colors:
+You also get some options to control the look: You can leave the icons in full color:
 
 ![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray1.png)
 
-Grayscale alternative (desaturation setting):
+Or dynamically convert them to grayscale:
 
 ![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray2.png)
-
-There were an original TopIcons extension for that, but it stopped being maintained and it had a few issues and little configuration options.
-Thus, this fork.
 
 Before (standard Gnome legacy tray, bottom left):
 
@@ -25,7 +20,7 @@ After:
 
 ![After](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after.png)
 
-Enjoy it!
+Enjoy!
 
 
 ## Installation
@@ -140,6 +135,6 @@ systemctl --user start dropbox
 
 ## Credits
 
-Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
+TopIcons Plus is a fork of TopIcons. Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
 
 Also, thanks to all contributors (code and issues), and especially to [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up!

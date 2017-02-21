@@ -72,12 +72,6 @@ Installed in /home/phocean/.local/share/gnome-shell/extensions/TopIcons@phocean.
 % 
 ```
 
-To avoid any Gnome update issue ([see the official statement](https://git.gnome.org/browse/gnome-shell/commit/?id=5e0e3ed)), make sure that version check is disabled:
-
-```bash
-gsettings set org.gnome.shell disable-extension-version-validation "true"
-```
-
 
 This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
 

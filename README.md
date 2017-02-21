@@ -35,52 +35,34 @@ Pre-Requisite: You need the *make* utility :
 ```bash
 # Debian, Ubuntu
 apt-get install make
-# RedHad, Fedora
+# Red Hat, Fedora
 dnf install make
 ```
 
-Download the code to any folder, e.g. <code>/home/$USER/Downloads</code>, using these commands :
+Download the code to any folder, using git:
 
 ```bash
-cd /home/$USER/Downloads
-git clone https://github.com/phocean/TopIcons.git
+git clone https://github.com/phocean/TopIcons-plus.git
 ```
 
-Move to the downloaded folder and execute the installation script:
+Go into the TopIcons Plus project directory and execute the installation script. This will compile the glib schemas and copy all the necessary files to the GNOME Shell extensions directory for your own user account (so you don't need admin privileges to run `make`). By default, TopIcons Plus will live in the directory `~/.local/share/gnome-shell/extensions/TopIcons@phocean.net/`.
 
 ```bash
-cd TopIcons
-make
+cd TopIcons-plus
+make install
 ```
 
-The whole process should look similar to this:
+If you want to install the extension so that it was usable system-wide, you'll have to change the `INSTALL_PATH` variable, and run as root.
 
 ```bash
-% make
-glib-compile-schemas schemas
-rm -rf _build
-mkdir _build
-cp -r schemas convenience.js extension.js metadata.json prefs.js README.md _build
-echo Build was successfull 
-Build was successfull
-rm -rf ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
-mkdir -p ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
-cp -r _build/* ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
-rm -rf _build
-echo Installed in ~/.local/share/gnome-shell/extensions/TopIcons@phocean.net
-Installed in /home/phocean/.local/share/gnome-shell/extensions/TopIcons@phocean.net
-% 
+sudo make install INSTALL_PATH=/usr/share/gnome-shell/extensions
 ```
 
-
-This moved the extension to <code>~/.local/share/gnome-shell/extensions</code> with the proper naming convention.
-
-Now, reload GNOME Shell with <code>Alt+F2</code> and then <code>r</code> or login/logout.
+Now, reload GNOME Shell. You can either hit <kbd>Alt</kbd>+<kbd>F2</kbd>, type `r`, and hit enter --- or login/logout.
 
 ![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload.png)
 
-Finally, launch the *gnome-tweak-tool* utility to manage extensions.
-There, you can enable *TopIcons Plus* and then tweak its appearance settings:
+Finally, launch the *gnome-tweak-tool* utility to manage extensions. There, you can enable *TopIcons Plus* and then tweak its look and feel.
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tweak.png)
 

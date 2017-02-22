@@ -6,19 +6,19 @@ Many applications, such as chat clients, downloaders, and some media players, ar
 
 Take a look at TopIcons Plus in action. Before installing (standard GNOME Legacy Tray in the bottom left):
 
-![Before](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/before.png)
+![Before](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/before.png)
 
 After installing (icons have moved to the top right):
 
-![After](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after.png)
+![After](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/after.png)
 
 You also get some options to control the look and feel. You can leave the icons in full color:
 
-![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray1.png)
+![Tray](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/tray1.png)
 
 Or dynamically convert them to grayscale:
 
-![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray2.png)
+![Tray](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/tray2.png)
 
 Enjoy!
 
@@ -33,13 +33,13 @@ Point your web browser to the TopIcons Plus page on the [GNOME Shell Extensions 
 
 All you have to do next is click the switch from off to on.
 
-![Toggle Switch](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/toggle-switch.png)
+![Toggle Switch](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/toggle-switch.png)
 
 There will be a GNOME Shell pop-up asking you to confirm that you want to download and install this extension. After that, it may take a moment for the extension to set itself up, but *you* are done. Icons will move from the legacy tray to the top panel on their own.
 
 If you want to tweak the icons' look and feel, you can go to the web page for [Installed Extensions](https://extensions.gnome.org/local/). Click on the wrench-and-screwdriver button to open the TopIcons Plus settings, or click the red X button to uninstall.
 
-![Installed Extensions web page](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/installed-extension-web-page.png)
+![Installed Extensions web page](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/installed-extension-web-page.png)
 
 If you install extensions from the GNOME website like this, be sure to revisit this page occasionally to check for updates.
 
@@ -75,11 +75,11 @@ sudo make install INSTALL_PATH=/usr/share/gnome-shell/extensions
 
 Now, reload GNOME Shell. You can either hit <kbd>Alt</kbd>+<kbd>F2</kbd>, type `r`, and hit enter --- or login/logout.
 
-![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/reload.png)
+![Reload Gnome](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/reload.png)
 
 Finally, launch the *gnome-tweak-tool* utility to manage extensions. There, you can enable *TopIcons Plus* and then tweak its look and feel.
 
-![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tweak.png)
+![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/tweak.png)
 
 ## Changelog
 
@@ -133,6 +133,6 @@ systemctl --user start dropbox
 
 ## Credits
 
-TopIcons Plus is a fork of TopIcons. Many thanks go to Adel Gadllah for making the [original extension](http://94.247.144.115/repo/topicons/) and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
+TopIcons Plus is a fork of TopIcons. Many thanks go to Adel Gadllah for making the original extension, and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
 
 Also, thanks to all contributors (code and issues), and especially to [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up!

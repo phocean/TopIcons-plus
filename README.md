@@ -85,45 +85,7 @@ Finally, launch the *gnome-tweak-tool* utility to manage extensions. There, you 
 
 ## Known issues
 
-### Dropbox
-
-The Dropbox notification icon sometimes trashes the tray (also buggy with the Gnome legacy tray).
-
-You can restore the tray by reloading Gnome-shell (ALT-F2, r).
-
-On a longer term, you can solve this problem using:
-
-- *systemd* to launch Dropbox (instead of as a Gnome startup application),
-- rely on the *Dropbox nautilus extension* to get a visual feedback on the synchronization status.
-
-Here is the systemd script to run it in the user context (thanks @robolange for the tip):
-
-```bash
-$ cat ~/.config/systemd/user/dropbox.service
-[Unit]
-Description=Dropbox Service
-
-[Service]
-Type=forking
-ExecStart=/usr/bin/dropbox start
-ExecStop=/usr/bin/dropbox stop
-PIDFile=${HOME}/.dropbox/dropbox.pid
-Restart=on-failure
-RestartSec=5
-StartLimitInterval=60s
-StartLimitBurst=3
-
-[Install]
-WantedBy=default.target
-```
-
-Which you can enable with these commands:
-
-```bash
-systemctl --user enable dropbox
-systemctl --user start dropbox
-```
-
+GNOME Shell by default now runs on top of [Wayland](https://wayland.freedesktop.org/) by default, as of release 3.22. However, there are still some remaining bugs, as not all applications, particularly non-GNOME apps, have adapted to Wayland yet. These really have nothing to do with TopIcons Plus itself, but we do have a [GitHub Issue to keep track of workarounds](https://github.com/phocean/TopIcons-plus/issues/47) while we wait for the different app developers to catch up with the new graphics backend.
 
 ## Credits
 

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Many applications, such as chat clients, downloaders, and some media players, are meant to run long-term in the background even after you close their window. These applications remain accessible by adding an icon to the GNOME Shell Legacy Tray. However, the Legacy Tray is hidden until you push your mouse into the lower-left of the screen and click on the small tab that appears. TopIcons Plus brings all icons back to the top panel so that it's easier to notice when a new application opens in the background or if one continues to idle after you thought you closed it.
+Many applications, such as chat clients, downloaders, and some media players, are meant to run long-term in the background even after you close their window. These applications remain accessible by adding an icon to the GNOME Shell Legacy Tray. However, the Legacy Tray is hidden until you push your mouse into the lower-left of the screen and click on the small tab that appears. TopIcons Plus brings all icons back to the top panel, so that it's easier to keep track of apps running in the backround.
 
 Take a look at TopIcons Plus in action. Before installing (standard GNOME Legacy Tray in the bottom left):
 
@@ -31,7 +31,7 @@ TopIcons Plus requires GNOME Shell 3.16 or newer.
 
 Point your web browser to the TopIcons Plus page on the [GNOME Shell Extensions website](https://extensions.gnome.org/extension/1031/topicons/). GNOME uses a browser addon, which should have come with your Linux distro, to provide a web interface to the extensions manager on your system. Currently, only Firefox is supported, but support for other browsers is in the works. The first time you visit this website, you should be prompted to enable this browser addon -- [see the FAQs](https://extensions.gnome.org/about/#no-detection) if you have any issues, then go back to the TopIcons Plus page.
 
-All you have to do next is click the switch from off to on.
+All you have to do next is click the switch on the extension page from off to on.
 
 ![Toggle Switch](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/toggle-switch.png)
 
@@ -41,7 +41,7 @@ If you want to tweak the icons' look and feel, you can go to the web page for [I
 
 ![Installed Extensions web page](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/installed-extension-web-page.png)
 
-If you install extensions from the GNOME website like this, be sure to revisit this page occasionally to check for updates.
+If you install extensions from the GNOME website like this, be sure to revisit this page occasionally to check for updates (look for a green update button).
 
 ### Or compile it yourself
 
@@ -49,9 +49,9 @@ Pre-Requisite: You need the *make* utility :
 
 ```bash
 # Debian, Ubuntu
-apt-get install make
+sudo apt-get install make
 # Red Hat, Fedora
-dnf install make
+sudo dnf install make
 ```
 
 Download the code to any folder, using git:
@@ -60,14 +60,16 @@ Download the code to any folder, using git:
 git clone https://github.com/phocean/TopIcons-plus.git
 ```
 
-Go into the TopIcons Plus project directory and execute the installation script. This will compile the glib schemas and copy all the necessary files to the GNOME Shell extensions directory for your own user account (so you don't need admin privileges to run `make`). By default, TopIcons Plus will live in the directory `~/.local/share/gnome-shell/extensions/TopIcons@phocean.net/`.
+Go into the TopIcons Plus project directory and execute the installation script.
 
 ```bash
 cd TopIcons-plus
 make install
 ```
 
-If you want to install the extension so that it was usable system-wide, you'll have to change the `INSTALL_PATH` variable, and run as root.
+This will compile the glib schemas and copy all the necessary files to the GNOME Shell extensions directory for your own user account (so you don't need admin privileges to run `make`). By default, TopIcons Plus will live in the directory `~/.local/share/gnome-shell/extensions/TopIcons@phocean.net/`.
+
+If you want to install the extension so that it will be usable system-wide, you'll have to change the `INSTALL_PATH` variable, and run as root.
 
 ```bash
 sudo make install INSTALL_PATH=/usr/share/gnome-shell/extensions

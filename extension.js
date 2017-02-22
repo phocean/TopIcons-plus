@@ -231,14 +231,14 @@ function setIcon(icon) {
 
     icon.opacity = opacityValue;
 
-    let effect = new Clutter.DesaturateEffect({factor : desaturationValue});
-    effect.set_factor(desaturationValue);
-    icon.add_effect_with_name('desaturate', effect);
+    let sat_effect = new Clutter.DesaturateEffect({factor : desaturationValue});
+    sat_effect.set_factor(desaturationValue);
+    icon.add_effect_with_name('desaturate', sat_effect);
 
-    let effect = new Clutter.BrightnessContrastEffect({});
-    effect.set_brightness(brightnessValue);
-    effect.set_contrast(contrastValue);
-    icon.add_effect_with_name('brightness-contrast',effect);
+    let bright_effect = new Clutter.BrightnessContrastEffect({});
+    bright_effect.set_brightness(brightnessValue);
+    bright_effect.set_contrast(contrastValue);
+    icon.add_effect_with_name('brightness-contrast', bright_effect);
 
 }
 

@@ -25,6 +25,8 @@ Enjoy!
 
 ## Installation
 
+TopIcons Plus requires GNOME Shell 3.16 or newer.
+
 ### Get it from the extensions website
 
 Point your web browser to the TopIcons Plus page on the [GNOME Shell Extensions website](https://extensions.gnome.org/extension/1031/topicons/). GNOME uses a browser addon, which should have come with your Linux distro, to provide a web interface to the extensions manager on your system. Currently, only Firefox is supported, but support for other browsers is in the works. The first time you visit this website, you should be prompted to enable this browser addon -- [see the FAQs](https://extensions.gnome.org/about/#no-detection) if you have any issues, then go back to the TopIcons Plus page.
@@ -78,10 +80,6 @@ Now, reload GNOME Shell. You can either hit <kbd>Alt</kbd>+<kbd>F2</kbd>, type `
 Finally, launch the *gnome-tweak-tool* utility to manage extensions. There, you can enable *TopIcons Plus* and then tweak its look and feel.
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tweak.png)
-
-## Compatibility
-
-GNOME Shell 3.16 and up.
 
 ## Changelog
 

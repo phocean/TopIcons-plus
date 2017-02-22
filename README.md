@@ -4,21 +4,21 @@
 
 Many applications, such as chat clients, downloaders, and some media players, are meant to run long-term in the background even after you close their window. These applications remain accessible by adding an icon to the GNOME Shell Legacy Tray. However, the Legacy Tray is hidden until you push your mouse into the lower-left of the screen and click on the small tab that appears. TopIcons Plus brings all icons back to the top panel so that it's easier to notice when a new application opens in the background or if one continues to idle after you thought you closed it.
 
-You also get some options to control the look: You can leave the icons in full color:
+Take a look at TopIcons Plus in action. Before installing (standard GNOME Legacy Tray in the bottom left):
+
+![Before](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/before.png)
+
+After installing (icons have moved to the top right):
+
+![After](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after.png)
+
+You also get some options to control the look and feel. You can leave the icons in full color:
 
 ![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray1.png)
 
 Or dynamically convert them to grayscale:
 
 ![Tray](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/tray2.png)
-
-Before (standard Gnome legacy tray, bottom left):
-
-![Before](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/before.png)
-
-After:
-
-![After](https://raw.githubusercontent.com/phocean/TopIcons/master/screenshots/after.png)
 
 Enjoy!
 

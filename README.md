@@ -83,14 +83,6 @@ Finally, launch the *gnome-tweak-tool* utility to manage extensions. There, you 
 
 ![Enable TopIcons](https://raw.githubusercontent.com/phocean/TopIcons-plus/master/screenshots/tweak.png)
 
-## Changelog
-
-v16:
-
-* Updated Gnome version support
-* Documentation updates
-* Minor changes to the icon box layout (margin)
-
 ## Known issues
 
 ### Dropbox

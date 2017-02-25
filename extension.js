@@ -94,7 +94,6 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
     setIcon(icon);
     icons.push(icon);
-
 }
 
 function onTrayIconRemoved(o, icon) {
@@ -214,82 +213,90 @@ function placeTray() {
 }
 
 
-function setIcon(icon) {
-
-    let opacityValue = settings.get_int('icon-opacity');
-    let desaturationValue =  settings.get_double('icon-saturation');
-    let brightnessValue = settings.get_double('icon-brightness');
-    let contrastValue =  settings.get_double('icon-contrast');
-    let iconSize = settings.get_int('icon-size');
-    let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-
-    icon.reactive = true;
-
-    icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-    icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-    setSpacing();
-
-    icon.opacity = opacityValue;
-
-    let sat_effect = new Clutter.DesaturateEffect({factor : desaturationValue});
-    sat_effect.set_factor(desaturationValue);
-    icon.add_effect_with_name('desaturate', sat_effect);
-
-    let bright_effect = new Clutter.BrightnessContrastEffect({});
-    bright_effect.set_brightness(brightnessValue);
-    bright_effect.set_contrast(contrastValue);
-    icon.add_effect_with_name('brightness-contrast', bright_effect);
-
-}
-
-
 // Settings
 
-function setOpacity() {
+function setIcon(icon) {
+
+    setOpacity(icon);
+    setSaturation(icon);
+    setBrightnessContrast(icon);
+    setSize(icon);
+
+}
+
+function setOpacity(icon) {
 
     let opacityValue = settings.get_int('icon-opacity');
 
-    for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
+    if (arguments.length == 1) {
+        icon.opacityEnterId = icon.get_parent().connect('enter-event', function(actor, event) { icon.opacity = 255; });
+        icon.opacityLeaveId = icon.get_parent().connect('leave-event', function(actor, event) { icon.opacity = opacityValue; });
         icon.opacity = opacityValue;
+    } else {
+        for (let i = 0; i < icons.length; i++) {
+            let icon = icons[i];
+            icon.opacityEnterId = icon.get_parent().connect('enter-event', function(actor, event) { icon.opacity = 255; });
+            icon.opacityLeaveId = icon.get_parent().connect('leave-event', function(actor, event) { icon.opacity = opacityValue; });
+            icon.opacity = opacityValue;
+        }
+    }
+}
+
+function setSaturation(icon) {
+
+    let desaturationValue =  settings.get_double('icon-saturation');
+
+    if (arguments.length == 1) {
+        let sat_effect = new Clutter.DesaturateEffect({factor : desaturationValue});
+        sat_effect.set_factor(desaturationValue);
+        sat_effect.set_factor(desaturationValue);
+        icon.add_effect_with_name('desaturate', sat_effect);
+    } else {    
+        for (let i = 0; i < icons.length; i++) {
+             let icon = icons[i];
+             let effect = icon.get_effect('desaturate');
+             if (effect)
+                effect.set_factor(desaturationValue);
+         }
     }
 
 }
 
-function setSaturation() {
-
-    let desaturationValue =  settings.get_double('icon-saturation');
-    
-    for (let i = 0; i < icons.length; i++) {
-         let icon = icons[i];
-         let effect = icon.get_effect('desaturate');
-         effect.set_factor(desaturationValue);
-     }
-}
-
-function setBrightnessContrast() {
+function setBrightnessContrast(icon) {
 
     let brightnessValue = settings.get_double('icon-brightness');
     let contrastValue =  settings.get_double('icon-contrast');
 
-    for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
-        let effect = icon.get_effect('brightness-contrast')
-        effect.set_brightness(brightnessValue);
-        effect.set_contrast(contrastValue);
+    if (arguments.length == 1) {
+        let bright_effect = new Clutter.BrightnessContrastEffect({});
+        bright_effect.set_brightness(brightnessValue);
+        bright_effect.set_contrast(contrastValue);
+        icon.add_effect_with_name('brightness-contrast', bright_effect);
+    } else {
+        for (let i = 0; i < icons.length; i++) {
+            let icon = icons[i];
+            let effect = icon.get_effect('brightness-contrast')
+            effect.set_brightness(brightnessValue);
+            effect.set_contrast(contrastValue);
+        }
     }
 
 }
 
-function setSize() {
+function setSize(icon) {
 
     let iconSize = settings.get_int('icon-size');
     let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
 
-    for (let i = 0; i < icons.length; i++) {
-        let icon = icons[i];
+    if (arguments.length == 1) {
         icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
         icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+    } else {
+        for (let i = 0; i < icons.length; i++) {
+            let icon = icons[i];
+            icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+            icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+        }
     }
 
 }

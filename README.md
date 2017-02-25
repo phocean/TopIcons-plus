@@ -91,4 +91,7 @@ GNOME Shell by default now runs on top of [Wayland](https://wayland.freedesktop.
 
 TopIcons Plus is a fork of TopIcons. Many thanks go to Adel Gadllah for making the original extension, and also to Mjnaderi for the [Toptray fork](https://github.com/mjnaderi/TopTray).
 
-Also, thanks to all contributors (code and issues), and especially to [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up!
+Also, thanks to all contributors (code and issues), and especially to:
+
+- [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up,
+- [terrycloth](https://github.com/terrycloth) for his contributions to the installation script and documentation to make it ready for the Fedora packaging.

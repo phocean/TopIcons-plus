@@ -125,8 +125,8 @@ function moveToTop() {
 
     // An empty ButtonBox will still display padding,therefore create it without visibility.
     iconsContainer = new PanelMenu.ButtonBox({visible: false});
+    iconsContainer.actor.add_actor(iconsBoxLayout);
     placeTray();
-    iconsContainer.actor.add_actor(iconsBoxLayout)
 
     // Move each tray icon to the top
     let length = tray._iconBox.get_n_children();
@@ -188,6 +188,8 @@ function moveToTray() {
 
 }
 
+// Settings
+
 function placeTray() {
 
     let trayPosition = settings.get_string('tray-pos');
@@ -212,15 +214,13 @@ function placeTray() {
 
 }
 
-
-// Settings
-
 function setIcon(icon) {
 
+    icon.reactive = true;
+    setSize(icon);
     setOpacity(icon);
     setSaturation(icon);
     setBrightnessContrast(icon);
-    setSize(icon);
 
 }
 

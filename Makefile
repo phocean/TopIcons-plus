@@ -19,3 +19,6 @@ compile-schema: ./schemas/org.gnome.shell.extensions.topicons.gschema.xml
 
 clean:
 	rm -rf _build
+
+uninstall:
+	rm -rf $(INSTALL_PATH)/$(INSTALL_NAME)

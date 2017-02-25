@@ -1,11 +1,27 @@
 // -*- mode: js2; indent-tabs-mode: nil; js2-basic-offset: 4 -*-
 
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
+// const Gio = imports.gi.Gio;
+// const GLib = imports.gi.GLib;
+// const GObject = imports.gi.GObject;
+// const Gtk = imports.gi.Gtk;
+// const Lang = imports.lang;
+// const Mainloop = imports.mainloop;
+
+
+
+// const Gettext = imports.gettext.domain('TopIcons-Plus');
+// const _ = Gettext.gettext;
+// const N_ = function(e) { return e; }
+
+// const ExtensionUtils = imports.misc.extensionUtils;
+// const Me = ExtensionUtils.getCurrentExtension();
+// const Convenience = Me.imports.convenience;
+
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
-const Mainloop = imports.mainloop;
+const Config = imports.misc.config;
+const Gio = imports.gi.Gio;
 
 const Gettext = imports.gettext.domain('TopIcons-Plus');
 const _ = Gettext.gettext;
@@ -19,108 +35,122 @@ function init() {
     Convenience.initTranslations();
 }
 
-const Settings = new Lang.Class({
-    Name: 'Settings',
+const TopIconsPlusSettings = new GObject.Class({
+    Name: 'TopIconsPlusPrefs',
+    Extends: Gtk.Grid,
 
     _init: function(params) {
-        let hbox = null;
-        let label = null;
+
+        this.parent(params);
+        this.margin = 24;
+        this.spacing = 30;
+        this.row_spacing = 10;
+        this._settings = Convenience.getSettings();
+
+        let label = null
         let widget = null;
         let value = null;
-        let positions = null;
-        let currentPos = null;
-        let pos = null;
-        let position = null;
-        let name = null;
+        let positionSetting = null;
+        let positionButton = null;
         let radio = null;
-        this.w = new Gtk.Grid(params);
-        this.w.set_orientation(Gtk.Orientation.VERTICAL);
-        this._settings = Convenience.getSettings();
-        this._changedPermitted = false;
+        //this._changedPermitted = false;
 
         // Icon opacity
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7, spacing:50});
-        label = new Gtk.Label({label: "Opacity", xalign: 0});
-        widget = new Gtk.SpinButton();
+        label = new Gtk.Label({
+            label: _('Opacity (min: 0, max: 255)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        widget = new Gtk.SpinButton({halign: Gtk.Align.END});
         widget.set_sensitive(true);
         widget.set_range(0, 255);
         widget.set_value(this._settings.get_int('icon-opacity'));
         widget.set_increments(1, 2);
         widget.connect('value-changed', Lang.bind(this, function(w){
-            value = w.get_value_as_int();
-            this._settings.set_int('icon-opacity', value);
-         }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+             value = w.get_value_as_int();
+             this._settings.set_int('icon-opacity', value);
+        }));
+        this.attach(label, 0, 1, 1, 1);
+        this.attach(widget, 1, 1, 1, 1);
 
         // Icon saturation
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: "Desaturation", xalign: 0});
-        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        label = new Gtk.Label({
+            label: _('Desaturation (min: 0.0, max: 1.0)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:1});
         widget.set_sensitive(true);
-        widget.set_range(0.000, 1.000);
+        widget.set_range(0.0, 1.0);
         widget.set_value(this._settings.get_double('icon-saturation'));
-        widget.set_increments(0.001, 0.010);
+        widget.set_increments(0.1, 0.2);
         widget.connect('value-changed', Lang.bind(this, function(w){
             value = w.get_value();
             this._settings.set_double('icon-saturation', value);
          }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 2, 1, 1);
+        this.attach(widget, 1, 2, 1, 1);
 
         // Icon brightness
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: "Brightness", xalign: 0});
-        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        label = new Gtk.Label({
+            label: _('Brightness (-1.0 - 1.0)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:1});
         widget.set_sensitive(true);
-        widget.set_range(-1.000, 1.000);
+        widget.set_range(-1.0, 1.0);
         widget.set_value(this._settings.get_double('icon-brightness'));
-        widget.set_increments(0.001, 0.010);
+        widget.set_increments(0.1, 0.2);
         widget.connect('value-changed', Lang.bind(this, function(w){
             value = w.get_value();
             this._settings.set_double('icon-brightness', value);
          }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 3, 1, 1);
+        this.attach(widget, 1, 3, 1, 1);
 
         // Icon contrast
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: "Contrast", xalign: 0});
-        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:3});
+        label = new Gtk.Label({
+            label: _('Contrast (-1.0 - 1.0)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        widget = new Gtk.SpinButton({halign:Gtk.Align.END, digits:1});
         widget.set_sensitive(true);
-        widget.set_range(-1.000, 1.000);
+        widget.set_range(-1.0, 1.0);
         widget.set_value(this._settings.get_double('icon-contrast'));
-        widget.set_increments(0.001, 0.010);
+        widget.set_increments(0.1, 0.2);
         widget.connect('value-changed', Lang.bind(this, function(w){
             value = w.get_value();
             this._settings.set_double('icon-contrast', value);
          }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 4, 1, 1);
+        this.attach(widget, 1, 4, 1, 1);
 
         // Icon size
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: _("Size"), xalign: 0});
+        label = new Gtk.Label({
+            label: _('Icon size (0 - 96)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
         widget = new Gtk.SpinButton({halign:Gtk.Align.END});
         widget.set_sensitive(true);
-        widget.set_range(0, 512);
+        widget.set_range(0, 96);
         widget.set_value(this._settings.get_int('icon-size'));
         widget.set_increments(1, 2);
         widget.connect('value-changed', Lang.bind(this, function(w){
             value = w.get_value_as_int();
             this._settings.set_int('icon-size', value);
          }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 5, 1, 1);
+        this.attach(widget, 1, 5, 1, 1);
 
         // Icon tray spacing
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: _("Spacing"), xalign: 0});
+        label = new Gtk.Label({
+            label: _('Spacing between icons (0 - 20)'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
         widget = new Gtk.SpinButton({halign:Gtk.Align.END});
         widget.set_sensitive(true);
         widget.set_range(0, 20);
@@ -130,33 +160,29 @@ const Settings = new Lang.Class({
             value = w.get_value_as_int();
             this._settings.set_int('icon-spacing', value);
          }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 6, 1, 1);
+        this.attach(widget, 1, 6, 1, 1);
 
         // Tray position in panel
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: _("Tray side"), xalign: 0});
-        positions = {'left': N_("left"), 'center': N_("center"), 'right': N_("right")}
-        currentPos = this._settings.get_string('tray-pos');
-        hbox.pack_start(label, true, true, 0);
-        for (pos in positions) {
-            position = pos;
-            name = Gettext.gettext(positions[pos]);
-            radio = new Gtk.RadioButton({ group: radio, label: name, halign: Gtk.Align.CENTER });
-            radio.connect('toggled', Lang.bind(this, function(widget) {
-                if (widget.active)
-                   this._settings.set_string('tray-pos', position);
-            }));
-            hbox.add(radio);
-            if (pos == currentPos)
-                radio.active = true;
-        }
-        this.w.add(hbox);
-        
+        label = new Gtk.Label({
+            label: _('Tray horizontal alignment'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
+        widget = new Gtk.ComboBoxText();
+        widget.append('center', "Center");
+        widget.append('left', "Left");
+        widget.append('right', "Right");
+        this._settings.bind('tray-pos', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
+        this.attach(label, 0, 7, 1, 1);
+        this.attach(widget, 1, 7, 1, 1);
+
         // Tray order in panel
-        hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin: 7});
-        label = new Gtk.Label({label: _("Tray position"), xalign: 0});
+        label = new Gtk.Label({
+            label: _('Tray offset'),
+            hexpand: true,
+            halign: Gtk.Align.START
+        });
         widget = new Gtk.SpinButton({halign:Gtk.Align.END});
         widget.set_sensitive(true);
         widget.set_range(0, 20);
@@ -166,17 +192,17 @@ const Settings = new Lang.Class({
             value = w.get_value_as_int();
             this._settings.set_int('tray-order', value);
         }));
-        hbox.pack_start(label, true, true, 0);
-        hbox.add(widget);
-        this.w.add(hbox);
+        this.attach(label, 0, 8, 1, 1);
+        this.attach(widget, 1, 8, 1, 1);
 
-        this._changedPermitted = true;
-    }
+        //this._changedPermitted = true;
+    },
+
 });
 
 function buildPrefsWidget() {
-    let widget = new Settings();
-    widget.w.show_all();
+     let widget = new TopIconsPlusSettings();
+     widget.show_all();
 
-    return widget.w;
+     return widget;
 }

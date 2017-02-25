@@ -93,7 +93,7 @@ const TopIconsPlusSettings = new GObject.Class({
 
         // Icon brightness
         label = new Gtk.Label({
-            label: _('Brightness (-1.0 - 1.0)'),
+            label: _('Brightness (min: -1.0, max: 1.0)'),
             hexpand: true,
             halign: Gtk.Align.START
         });
@@ -111,7 +111,7 @@ const TopIconsPlusSettings = new GObject.Class({
 
         // Icon contrast
         label = new Gtk.Label({
-            label: _('Contrast (-1.0 - 1.0)'),
+            label: _('Contrast (min: -1.0, max: 1.0)'),
             hexpand: true,
             halign: Gtk.Align.START
         });
@@ -129,7 +129,7 @@ const TopIconsPlusSettings = new GObject.Class({
 
         // Icon size
         label = new Gtk.Label({
-            label: _('Icon size (0 - 96)'),
+            label: _('Icon size (min: 0, max: 96)'),
             hexpand: true,
             halign: Gtk.Align.START
         });
@@ -147,7 +147,7 @@ const TopIconsPlusSettings = new GObject.Class({
 
         // Icon tray spacing
         label = new Gtk.Label({
-            label: _('Spacing between icons (0 - 20)'),
+            label: _('Spacing between icons (min: 0, max: 20)'),
             hexpand: true,
             halign: Gtk.Align.START
         });

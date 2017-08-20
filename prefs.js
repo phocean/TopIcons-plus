@@ -170,9 +170,9 @@ const TopIconsPlusSettings = new GObject.Class({
             halign: Gtk.Align.START
         });
         widget = new Gtk.ComboBoxText();
-        widget.append('center', "Center");
-        widget.append('left', "Left");
-        widget.append('right', "Right");
+        widget.append('center', _("Center"));
+        widget.append('left', _("Left"));
+        widget.append('right', _("Right"));
         this._settings.bind('tray-pos', widget, 'active-id', Gio.SettingsBindFlags.DEFAULT);
         this.attach(label, 0, 7, 1, 1);
         this.attach(widget, 1, 7, 1, 1);

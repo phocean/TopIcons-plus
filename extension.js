@@ -109,6 +109,16 @@ function onTrayIconRemoved(o, icon) {
     
 }
 
+function createIconsContainer() {
+    // Create box layout for icon containers
+    iconsBoxLayout = new St.BoxLayout();
+    setSpacing();
+
+    // An empty ButtonBox will still display padding,therefore create it without visibility.
+    iconsContainer = new PanelMenu.ButtonBox({visible: false});
+    iconsContainer.actor.add_actor(iconsBoxLayout);
+}
+
 function moveToTop() {
 
     // Replace signal handlers
@@ -119,13 +129,7 @@ function moveToTop() {
     trayAddedId = tray._trayManager.connect('tray-icon-added', onTrayIconAdded);
     trayRemovedId = tray._trayManager.connect('tray-icon-removed', onTrayIconRemoved);
 
-    // Create box layout for icon containers 
-    iconsBoxLayout = new St.BoxLayout();
-    setSpacing();
-
-    // An empty ButtonBox will still display padding,therefore create it without visibility.
-    iconsContainer = new PanelMenu.ButtonBox({visible: false});
-    iconsContainer.actor.add_actor(iconsBoxLayout);
+    createIconsContainer();
     placeTray();
 
     // Move each tray icon to the top

@@ -20,10 +20,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
+const System = imports.system;
 const Clutter = imports.gi.Clutter;
 const PanelMenu = imports.ui.panelMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -43,9 +45,13 @@ let blacklist = ["skype","SkypeNotification@chrisss404.gmail.com"]; // blacklist
 function init() { }
 
 function enable() {
-
-    GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
     tray = Main.legacyTray;
+
+    if (tray)
+        GLib.idle_add(GLib.PRIORITY_LOW, moveToTop);
+    else
+        GLib.idle_add(GLib.PRIORITY_LOW, createTray);
+
     settings = Convenience.getSettings();
     settings.connect('changed::icon-opacity', Lang.bind(this, setOpacity));
     settings.connect('changed::icon-saturation', Lang.bind(this, setSaturation));
@@ -60,7 +66,10 @@ function enable() {
 
 function disable() {
 
-    moveToTray();
+    if (Main.legacyTray)
+        moveToTray();
+    else
+        destroyTray();
     settings.run_dispose();
 
 }
@@ -117,6 +126,26 @@ function createIconsContainer() {
     // An empty ButtonBox will still display padding,therefore create it without visibility.
     iconsContainer = new PanelMenu.ButtonBox({visible: false});
     iconsContainer.actor.add_actor(iconsBoxLayout);
+}
+
+function createTray() {
+    createIconsContainer();
+
+    tray = new Shell.TrayManager();
+    tray.connect('tray-icon-added', onTrayIconAdded);
+    tray.connect('tray-icon-removed', onTrayIconRemoved);
+    tray.manage_screen(global.screen, Main.panel.actor);
+    placeTray();
+}
+
+function destroyTray() {
+    iconsContainer.actor.destroy();
+    iconsContainer = null;
+    iconsBoxLayout = null;
+    icons = [];
+
+    tray = null;
+    System.gc(); // force finalizing tray to unmanage screen
 }
 
 function moveToTop() {

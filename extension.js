@@ -40,6 +40,7 @@ let trayRemovedId = 0;
 let icons = [];
 let iconsBoxLayout = null;
 let iconsContainer = null;
+let panelChildSignals = {};
 let blacklist = [["skype","SkypeNotification@chrisss404.gmail.com"]]; // blacklist: array of [uuid, wmClass (icon application name)] pairs
 
 function init() { }
@@ -62,6 +63,7 @@ function enable() {
     settings.connect('changed::tray-pos', Lang.bind(this, placeTray));
     settings.connect('changed::tray-order', Lang.bind(this, placeTray));
 
+    connectPanelChildSignals();
 }
 
 function disable() {
@@ -72,6 +74,7 @@ function disable() {
         destroyTray();
     settings.run_dispose();
 
+    disconnectPanelChildSignals();
 }
 
 function onTrayIconAdded(o, icon, role, delay=1000) {
@@ -101,7 +104,7 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
         iconsContainer.actor.visible = true;
         return GLib.SOURCE_REMOVE;
     }));
-    
+
     iconsBoxLayout.insert_child_at_index(iconContainer, 0);
     setIcon(icon);
     icons.push(icon);
@@ -117,7 +120,42 @@ function onTrayIconRemoved(o, icon) {
 
     if (icons.length === 0)
         iconsContainer.actor.visible = false;
-    
+
+}
+
+function onPanelChange(actor, child) {
+    if (!iconsBoxLayout || iconsBoxLayout.get_parent() === child)
+        return;
+
+    // refresh position on panel left/center/right
+    // box add/remove child event
+    placeTray();
+}
+
+function connectPanelChildSignals() {
+    panelChildSignals = {
+        left: {
+            add: Main.panel._leftBox.connect('actor_added', Lang.bind(this, onPanelChange)),
+            del: Main.panel._leftBox.connect('actor_removed', Lang.bind(this, onPanelChange))
+        },
+        center: {
+            add: Main.panel._centerBox.connect('actor_added', Lang.bind(this, onPanelChange)),
+            del: Main.panel._centerBox.connect('actor_removed', Lang.bind(this, onPanelChange))
+        },
+        right: {
+            add: Main.panel._rightBox.connect('actor_added', Lang.bind(this, onPanelChange)),
+            del: Main.panel._rightBox.connect('actor_removed', Lang.bind(this, onPanelChange))
+        }
+    }
+}
+
+function disconnectPanelChildSignals() {
+    Main.panel._leftBox.disconnect(panelChildSignals.left.add);
+    Main.panel._leftBox.disconnect(panelChildSignals.left.del);
+    Main.panel._centerBox.disconnect(panelChildSignals.center.add);
+    Main.panel._centerBox.disconnect(panelChildSignals.center.del);
+    Main.panel._rightBox.disconnect(panelChildSignals.right.add);
+    Main.panel._rightBox.disconnect(panelChildSignals.right.del);
 }
 
 function createIconsContainer() {
@@ -233,19 +271,18 @@ function placeTray() {
     let parent = iconsContainer.actor.get_parent();
     if (parent)
         parent.remove_actor(iconsContainer.actor);
-    
-    if (trayPosition == 'left') {
-        let index = Main.panel._leftBox.get_n_children() - trayOrder;
-        Main.panel._leftBox.insert_child_at_index(iconsContainer.actor, index);
-    }
-    else if (trayPosition == 'center') {
-        let index = Main.panel._centerBox.get_n_children() - trayOrder;
-        Main.panel._centerBox.insert_child_at_index(iconsContainer.actor, index);
-    }
-    else {
-        let index = Main.panel._rightBox.get_n_children() - trayOrder;
-        Main.panel._rightBox.insert_child_at_index(iconsContainer.actor, index);
-    }
+
+    // panel box
+    let box;
+    if (trayPosition == 'left') box = Main.panel._leftBox;
+    else if (trayPosition == 'center') box = Main.panel._centerBox;
+    else box = Main.panel._rightBox;
+
+    // fix index (trayOrder larger than length)
+    let length = box.get_n_children();
+    let index = length - Math.min(trayOrder, length);
+
+    box.insert_child_at_index(iconsContainer.actor, index);
 
 }
 
@@ -286,7 +323,7 @@ function setSaturation(icon) {
         sat_effect.set_factor(desaturationValue);
         sat_effect.set_factor(desaturationValue);
         icon.add_effect_with_name('desaturate', sat_effect);
-    } else {    
+    } else {
         for (let i = 0; i < icons.length; i++) {
              let icon = icons[i];
              let effect = icon.get_effect('desaturate');

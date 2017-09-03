@@ -12,7 +12,7 @@ build: compile-schema
 	rm -rf _build
 	mkdir _build
 	cp -r --preserve=timestamps schemas convenience.js extension.js metadata.json prefs.js README.md _build
-	echo Build was successfull 
+	echo Build was successful 
 
 compile-schema: ./schemas/org.gnome.shell.extensions.topicons.gschema.xml
 	glib-compile-schemas schemas

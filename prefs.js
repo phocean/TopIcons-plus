@@ -1,35 +1,15 @@
 // -*- mode: js2; indent-tabs-mode: nil; js2-basic-offset: 4 -*-
 
-// const Gio = imports.gi.Gio;
-// const GLib = imports.gi.GLib;
-// const GObject = imports.gi.GObject;
-// const Gtk = imports.gi.Gtk;
-// const Lang = imports.lang;
-// const Mainloop = imports.mainloop;
-
-
-
-// const Gettext = imports.gettext.domain('TopIcons-Plus');
-// const _ = Gettext.gettext;
-// const N_ = function(e) { return e; }
-
-// const ExtensionUtils = imports.misc.extensionUtils;
-// const Me = ExtensionUtils.getCurrentExtension();
-// const Convenience = Me.imports.convenience;
-
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
-const Config = imports.misc.config;
 const Gio = imports.gi.Gio;
-
-const Gettext = imports.gettext.domain('TopIcons-Plus');
-const _ = Gettext.gettext;
-const N_ = function(e) { return e; }
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
+const _ = Gettext.gettext;
 
 function init() {
     Convenience.initTranslations();
@@ -53,7 +33,6 @@ const TopIconsPlusSettings = new GObject.Class({
         let positionSetting = null;
         let positionButton = null;
         let radio = null;
-        //this._changedPermitted = false;
 
         // Icon opacity
         label = new Gtk.Label({

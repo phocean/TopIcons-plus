@@ -1,4 +1,4 @@
-<schemalist>
+<schemalist gettext-domain="TopIcons-Plus">
   <schema id="org.gnome.shell.extensions.topicons" path="/org/gnome/shell/extensions/topicons/">
     <key name="icon-saturation" type="d">
       <default>0.4</default>

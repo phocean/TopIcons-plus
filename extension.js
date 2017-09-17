@@ -43,7 +43,7 @@ let iconsContainer = null;
 let panelChildSignals = {};
 let blacklist = [["skype","SkypeNotification@chrisss404.gmail.com"]]; // blacklist: array of [uuid, wmClass (icon application name)] pairs
 
-function init() { }
+function init() { Convenience.initTranslations(); }
 
 function enable() {
     tray = Main.legacyTray;

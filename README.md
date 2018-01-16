@@ -2,7 +2,7 @@
 
 ** This project has been archived.**
 
-Per issue #91, I have stopped maintaining this project.
+Per issue [#91](https://github.com/phocean/TopIcons-plus/issues/91), I have stopped maintaining this project.
 
 I am not a TopIcons-Plus user myself and even not a Gnome user anymore.
 

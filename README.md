@@ -1,12 +1,4 @@
-# UNMAINTAINED
-
-** This project has been archived.**
-
-Per issue [#91](https://github.com/phocean/TopIcons-plus/issues/91), I have stopped maintaining this project.
-
-I am not a TopIcons-Plus user myself and even not a Gnome user anymore.
-
-Moreover, the Gnome project is pushing towards dropping status icons and any kind of legacy tray, making the project useless on the long term and difficult to maintain due to bugs or lack of features that are out of its scope.
+# This is a fork of the original TopIcons Plus extension with other forks commits merged
 
 # TopIcons Plus
 

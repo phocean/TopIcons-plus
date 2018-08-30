@@ -67,14 +67,13 @@ function enable() {
 }
 
 function disable() {
-
+    disconnectPanelChildSignals();
+    
     if (Main.legacyTray)
         moveToTray();
     else
         destroyTray();
     settings.run_dispose();
-
-    disconnectPanelChildSignals();
 }
 
 function onTrayIconAdded(o, icon, role, delay=1000) {

@@ -177,7 +177,7 @@ function createTray() {
     tray = new Shell.TrayManager();
     tray.connect('tray-icon-added', onTrayIconAdded);
     tray.connect('tray-icon-removed', onTrayIconRemoved);
-    if (global.hasOwnProperty("screen")) {
+    if (global.screen) {
         // For GNOME 3.28 and older
         tray.manage_screen(global.screen, Main.panel.actor);
     } else {

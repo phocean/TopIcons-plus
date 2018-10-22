@@ -1,5 +1,3 @@
-# This is a fork of the original TopIcons Plus extension with other forks commits merged
-
 # TopIcons Plus
 
 ## Introduction

@@ -67,14 +67,13 @@ function enable() {
 }
 
 function disable() {
-
+    disconnectPanelChildSignals();
+    
     if (Main.legacyTray)
         moveToTray();
     else
         destroyTray();
     settings.run_dispose();
-
-    disconnectPanelChildSignals();
 }
 
 function onTrayIconAdded(o, icon, role, delay=1000) {
@@ -178,7 +177,13 @@ function createTray() {
     tray = new Shell.TrayManager();
     tray.connect('tray-icon-added', onTrayIconAdded);
     tray.connect('tray-icon-removed', onTrayIconRemoved);
-    tray.manage_screen(global.screen, Main.panel.actor);
+    if (global.screen) {
+        // For GNOME 3.28 and older
+        tray.manage_screen(global.screen, Main.panel.actor);
+    } else {
+        // For GNOME 3.30+
+        tray.manage_screen(Main.panel.actor);
+    }
     placeTray();
 }
 

@@ -1,5 +1,5 @@
 INSTALL_PATH = ~/.local/share/gnome-shell/extensions
-INSTALL_NAME = TopIcons@huttli
+INSTALL_NAME = TopIcons@phocean.net
 
 install: build
 	rm -rf $(INSTALL_PATH)/$(INSTALL_NAME)

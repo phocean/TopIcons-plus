@@ -1,3 +1,13 @@
+# WARNING
+
+> As stated in issue [#91](https://github.com/phocean/TopIcons-plus/issues/91), I have stopped maintaining this project actively.
+
+The Gnome project chose to drop status icons and any kind of legacy tray, making the project useless on the long term and difficult to maintain due to bugs or lack of features that are out of its scope.
+
+In particular, no wayland support can be achieved.
+
+Open such issues not here but to the Gnome project.
+
 # TopIcons Plus
 
 ## Introduction
@@ -93,5 +103,6 @@ TopIcons Plus is a fork of TopIcons. Many thanks go to Adel Gadllah for making t
 
 Also, thanks to all contributors (code and issues), and especially to:
 
-- [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up,
-- [terrycloth](https://github.com/terrycloth) for his contributions to the installation script and documentation to make it ready for the Fedora packaging.
+- [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up ;
+- [terrycloth](https://github.com/terrycloth) for his contributions to the installation script and documentation to make it ready for the Fedora packaging ;
+- [huttli](https://github.com/huttli) for packaging various forks and changes, and submitting them upstream.

@@ -16,6 +16,6 @@
   ],
   "settings-schema": "org.gnome.shell.extensions.topicons",
   "url": "https://github.com/phocean/TopIcons-plus",
-  "uuid": "TopIcons@huttli",
-  "version": 21
+  "uuid": "TopIcons@phocean.net",
+  "version": 22
 }

@@ -31,6 +31,7 @@ const PanelMenu = imports.ui.panelMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Config = imports.misc.config;
 
 let settings = null;
 let tray = null;
@@ -118,7 +119,8 @@ function onTrayIconRemoved(o, icon) {
     let parent = icon.get_parent();
     if (parent)
          parent.destroy();
-    icon.destroy();
+    if (!parent || !versionAtLeast('3.30', Config.PACKAGE_VERSION))
+	icon.destroy();
     icons.splice(icons.indexOf(icon), 1);
 
     if (icons.length === 0)
@@ -388,4 +390,22 @@ function setSpacing() {
 
     iconsBoxLayout.set_style('spacing: ' + boxLayoutSpacing + 'px; margin_top: 2px; margin_bottom: 2px;');
 
+}
+
+// Code copied from PanelOSD extension (GPL 2.0)
+function versionAtLeast(atleast, current) {
+    let currentArray = current.split('.');
+    let major = currentArray[0];
+    let minor = currentArray[1];
+    let point = currentArray[2];
+    let atleastArray = atleast.split('.');
+    if ((atleastArray[0] < major) ||
+        (atleastArray[0] == major &&
+         atleastArray[1] < minor) ||
+        (atleastArray[0] == major &&
+         atleastArray[1] == minor) &&
+        (atleastArray[2] == undefined ||
+         atleastArray[2] <= point))
+        return true;
+    return false;
 }

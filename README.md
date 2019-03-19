@@ -8,6 +8,10 @@ In particular, no wayland support can be achieved.
 
 Open such issues not here but to the Gnome project.
 
+Meanwhile, I encourage you to migrate to libappindicator and its [extension](https://github.com/ubuntu/gnome-shell-extension-appindicator), which is supported by most applications nowadays.
+
+> The code here should still work. I will happily merge good pull requests and package releases when necessary.
+
 # TopIcons Plus
 
 ## Introduction
@@ -105,4 +109,5 @@ Also, thanks to all contributors (code and issues), and especially to:
 
 - [nevesnunes](https://github.com/nevesnunes) for the very nice code improvements he brought up ;
 - [terrycloth](https://github.com/terrycloth) for his contributions to the installation script and documentation to make it ready for the Fedora packaging ;
-- [huttli](https://github.com/huttli) for packaging various forks and changes, and submitting them upstream.
+- [huttli](https://github.com/huttli) for packaging various forks and changes, and submitting them upstream ;
+- and many other good guys that pushed translations and bug fixes !

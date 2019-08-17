@@ -82,8 +82,7 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
     // loop through the array and hide the extension if extension X is enabled and corresponding application is running
     let iconWmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
     for (let [wmClass, uuid] of blacklist) {
-        if (ExtensionUtils.extensions[uuid] !== undefined &&
-            ExtensionUtils.extensions[uuid].state === 1 &&
+        if (Main.extensionManager.lookup(uuid) &&
             iconWmClass === wmClass)
             return;
     }

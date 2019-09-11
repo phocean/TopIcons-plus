@@ -82,8 +82,7 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
     // loop through the array and hide the extension if extension X is enabled and corresponding application is running
     let iconWmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
     for (let [wmClass, uuid] of blacklist) {
-        if (ExtensionUtils.extensions[uuid] !== undefined &&
-            ExtensionUtils.extensions[uuid].state === 1 &&
+        if (Main.extensionManager.lookup(uuid) &&
             iconWmClass === wmClass)
             return;
     }
@@ -101,7 +100,7 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
 
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, Lang.bind(this, function(){
         iconContainer.visible = true;
-        iconsContainer.actor.visible = true;
+        iconsContainer.show();
         return GLib.SOURCE_REMOVE;
     }));
 
@@ -124,7 +123,7 @@ function onTrayIconRemoved(o, icon) {
     icons.splice(icons.indexOf(icon), 1);
 
     if (icons.length === 0)
-        iconsContainer.actor.visible = false;
+        iconsContainer.hide();
 
 }
 
@@ -170,7 +169,7 @@ function createIconsContainer() {
 
     // An empty ButtonBox will still display padding,therefore create it without visibility.
     iconsContainer = new PanelMenu.ButtonBox({visible: false});
-    iconsContainer.actor.add_actor(iconsBoxLayout);
+    iconsContainer.add_actor(iconsBoxLayout);
 }
 
 function createTray() {
@@ -184,7 +183,7 @@ function createTray() {
         tray.manage_screen(global.screen, Main.panel.actor);
     } else {
         // For GNOME 3.30+
-        tray.manage_screen(Main.panel.actor);
+        tray.manage_screen(Main.panel);
     }
     placeTray();
 }
@@ -279,9 +278,9 @@ function placeTray() {
     let trayPosition = settings.get_string('tray-pos');
     let trayOrder = settings.get_int('tray-order');
 
-    let parent = iconsContainer.actor.get_parent();
+    let parent = iconsContainer.get_parent();
     if (parent)
-        parent.remove_actor(iconsContainer.actor);
+        parent.remove_actor(iconsContainer);
 
     // panel box
     let box;
@@ -293,7 +292,7 @@ function placeTray() {
     let length = box.get_n_children();
     let index = length - Math.min(trayOrder, length);
 
-    box.insert_child_at_index(iconsContainer.actor, index);
+    box.insert_child_at_index(iconsContainer, index);
 
 }
 

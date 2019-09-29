@@ -1,6 +1,8 @@
 INSTALL_PATH = ~/.local/share/gnome-shell/extensions
 INSTALL_NAME = TopIcons@phocean.net
 
+all: build
+
 install: build
 	rm -rf $(INSTALL_PATH)/$(INSTALL_NAME)
 	mkdir -p $(INSTALL_PATH)/$(INSTALL_NAME)

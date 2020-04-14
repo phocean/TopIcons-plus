@@ -372,12 +372,16 @@ function setSize(icon) {
 
     if (arguments.length == 1) {
         icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-        icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+        //icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+        icon.set_height(iconSize * scaleFactor);
+        icon.set_y_align(Clutter.ActorAlign.CENTER)
     } else {
         for (let i = 0; i < icons.length; i++) {
             let icon = icons[i];
             icon.get_parent().set_size(iconSize * scaleFactor, iconSize * scaleFactor);
-            icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+            //icon.set_size(iconSize * scaleFactor, iconSize * scaleFactor);
+            icon.set_height(iconSize * scaleFactor);
+            icon.set_y_align(Clutter.ActorAlign.CENTER)
         }
     }
 

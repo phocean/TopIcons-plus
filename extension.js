@@ -82,9 +82,18 @@ function onTrayIconAdded(o, icon, role, delay=1000) {
     // loop through the array and hide the extension if extension X is enabled and corresponding application is running
     let iconWmClass = icon.wm_class ? icon.wm_class.toLowerCase() : '';
     for (let [wmClass, uuid] of blacklist) {
-        if (Main.extensionManager.lookup(uuid) &&
-            iconWmClass === wmClass)
-            return;
+        if (Main.extensionManager === undefined) {
+            // For gnome-shell < 3.33.90
+            if (ExtensionUtils.extensions[uuid] !== undefined &&
+                ExtensionUtils.extensions[uuid].state === 1 &&
+                iconWmClass === wmClass)
+                return;
+        } else {
+            // For gnome-shell >= 3.33.90
+            if (Main.extensionManager.lookup(uuid) &&
+                iconWmClass === wmClass)
+                return;
+        }
     }
 
     let iconContainer = new St.Button({child: icon, visible: false});

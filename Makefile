@@ -13,7 +13,7 @@ install: build
 build: compile-schema
 	rm -rf _build
 	mkdir _build
-	cp -P -p locale schemas convenience.js extension.js metadata.json prefs.js README.md _build
+	cp -R -p locale schemas convenience.js extension.js metadata.json prefs.js README.md _build
 	echo Build was successful
 
 compile-schema: ./schemas/org.gnome.shell.extensions.topicons.gschema.xml

@@ -19,6 +19,9 @@ build: compile-schema
 compile-schema: ./schemas/org.gnome.shell.extensions.topicons.gschema.xml
 	glib-compile-schemas schemas
 
+delivery: delivery
+	zip --include '*.js' 'metadata.json' 'locale/*' --exclude '*_build*' '*.po' -r TopIcons.zip .
+
 clean:
 	rm -rf _build
 

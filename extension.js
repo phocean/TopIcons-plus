@@ -198,7 +198,7 @@ function createTray() {
 }
 
 function destroyTray() {
-    iconsContainer.actor.destroy();
+    iconsContainer.destroy();
     iconsContainer = null;
     iconsBoxLayout = null;
     icons = [];
@@ -271,9 +271,9 @@ function moveToTray() {
         iconsBoxLayout = null;
     }
     if (iconsContainer) {
-        if (iconsContainer.actor) {
-            iconsContainer.actor.destroy();
-            iconsContainer.actor = null;
+        if (iconsContainer) {
+            iconsContainer.destroy();
+            iconsContainer = null;
         }
         iconsContainer = null;
     }

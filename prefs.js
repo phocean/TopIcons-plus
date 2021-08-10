@@ -12,7 +12,7 @@ const Gettext = imports.gettext.domain(Me.metadata['gettext-domain']);
 const _ = Gettext.gettext;
 
 function init() {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
 const TopIconsPlusSettings = new GObject.Class({
@@ -180,8 +180,6 @@ const TopIconsPlusSettings = new GObject.Class({
 });
 
 function buildPrefsWidget() {
-     let widget = new TopIconsPlusSettings();
-     widget.show_all();
+     return new TopIconsPlusSettings();
 
-     return widget;
 }

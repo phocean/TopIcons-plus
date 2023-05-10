@@ -3,7 +3,10 @@
   "name": "TopIcons Plus",
   "gettext-domain": "TopIcons-Plus",
   "shell-version": [
-    "40"
+    "40",
+    "41",
+    "42",
+    "43"
   ],
   "settings-schema": "org.gnome.shell.extensions.topicons",
   "url": "https://github.com/phocean/TopIcons-plus",
